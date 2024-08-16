@@ -7,6 +7,7 @@ import { ClerkLoading, ClerkLoaded, UserButton } from "@clerk/nextjs";
 import { Loader } from "lucide-react";
 
 import { SidebarItem } from "./sidebar-items";
+import { ModeToggle } from "./dark-light-toggle";
 
 type Props = {
   className?: string;
@@ -26,6 +27,7 @@ export const Sidebar = ({ className }: Props) => {
           <h1 className="text-2xl font-extrabold text-green-600 tracking-wide">
             Lingoes
           </h1>
+          <ModeToggle />
         </div>
       </Link>
 
