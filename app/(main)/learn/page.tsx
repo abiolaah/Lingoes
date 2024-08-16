@@ -5,7 +5,7 @@ import { UserProgress } from "@/components/user-progress";
 
 const LearnPage = () => {
   return (
-    <div className="flex flex-row-reverse gap-[48px] px-6">
+    <div className="flex flex-row-reverse items-center justify-center gap-[48px] px-6">
       <StickyWrapper>
         <UserProgress
           activeCourse={{ title: "Spanish", imageSrc: "/flags/l/es.svg" }}
