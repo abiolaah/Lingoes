@@ -35,6 +35,3 @@ export const getCourseById = cache(async (courseId: number) => {
 
   return data;
 });
-
-//When committing: You made the following changes:
-//Add new method to get  course by id.
