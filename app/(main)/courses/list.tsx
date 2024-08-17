@@ -39,5 +39,3 @@ export const List = ({ courses, activeCourseId }: Props) => {
     </div>
   );
 };
-
-//changes to this file includes, creating the onClick function
