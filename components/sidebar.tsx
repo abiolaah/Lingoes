@@ -27,7 +27,7 @@ export const Sidebar = ({ className }: Props) => {
           <h1 className="text-2xl font-extrabold text-green-600 tracking-wide">
             Lingoes
           </h1>
-          <ModeToggle />
+          <ModeToggle className="hidden lg:block" />
         </div>
       </Link>
 
