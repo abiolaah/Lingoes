@@ -62,12 +62,48 @@ const main = async () => {
         unitId: 1,
         order: 1,
       },
-      // {
-      //   id: 2,
-      //   title: "Verbs",
-      //   unitId: 1,
-      //   order: 2,
-      // },
+      {
+        id: 2,
+        title: "Verbs",
+        unitId: 1,
+        order: 2,
+      },
+      {
+        id: 3,
+        title: "Adjectives",
+        unitId: 1,
+        order: 3,
+      },
+      {
+        id: 4,
+        title: "Pronouns",
+        unitId: 1,
+        order: 4,
+      },
+      {
+        id: 5,
+        title: "Adverbs",
+        unitId: 1,
+        order: 5,
+      },
+      {
+        id: 6,
+        title: "Prepositions",
+        unitId: 1,
+        order: 6,
+      },
+      {
+        id: 7,
+        title: "Phrases",
+        unitId: 1,
+        order: 7,
+      },
+      {
+        id: 8,
+        title: "Salutation",
+        unitId: 1,
+        order: 8,
+      },
     ]);
 
     await db.insert(schema.challenges).values([
@@ -101,7 +137,7 @@ const main = async () => {
         imageSrc: "/man.svg",
         correct: true,
         text: "l'homme",
-        audioSrc: "/es_man.mp3",
+        audioSrc: "/audio/fr_man.mp3",
       },
       {
         id: 2,
@@ -109,7 +145,7 @@ const main = async () => {
         imageSrc: "/woman.svg",
         correct: false,
         text: "la femme",
-        audioSrc: "/es_woman.mp3",
+        audioSrc: "/audio/fr_woman.mp3",
       },
       {
         id: 3,
@@ -117,7 +153,7 @@ const main = async () => {
         imageSrc: "/robot.svg",
         correct: false,
         text: "le robot",
-        audioSrc: "/es_robot.mp3",
+        audioSrc: "/audio/fr_robot.mp3",
       },
     ]);
 
