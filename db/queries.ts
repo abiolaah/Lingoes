@@ -36,7 +36,6 @@ export const getUnits = cache(async () => {
     return [];
   }
 
-  //TODO: Confirm if order is needed
   const data = await db.query.units.findMany({
     where: eq(units.courseId, userProgress.activeCourseId),
     with: {
@@ -56,6 +55,10 @@ export const getUnits = cache(async () => {
 
   const normalizedData = data.map((unit) => {
     const lessonsWithCompletedStatus = unit.lessons.map((lesson) => {
+      // Challenge in lesson is empty
+      if (lesson.challenges.length === 0) {
+        return { ...lesson, completed: false };
+      }
       const allCompletedChallenges = lesson.challenges.every((challenge) => {
         return (
           challenge.challengeProgress &&

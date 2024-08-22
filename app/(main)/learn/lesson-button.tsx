@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Check, Crown, Star } from "lucide-react";
+import { BookOpen, Check, Crown, Star } from "lucide-react";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ type Props = {
   locked?: boolean;
   current?: boolean;
   percentage: number;
+  challengeType?: string;
 };
 
 export const LessonButton = ({
@@ -26,6 +27,7 @@ export const LessonButton = ({
   locked,
   current,
   percentage,
+  challengeType,
 }: Props) => {
   const cycleLength = 8;
   const cycleIndex = index % cycleLength;
@@ -47,8 +49,9 @@ export const LessonButton = ({
   const isFirst = index === 0;
   const isLast = index === totalCount;
   const isCompleted = !current && !locked;
+  const isStory = challengeType === "STORY";
 
-  const Icon = isCompleted ? Check : isLast ? Crown : Star;
+  const Icon = isStory ? BookOpen : isCompleted ? Check : isLast ? Crown : Star;
 
   const href = isCompleted ? `/lesson/${id}` : "/lesson";
 
