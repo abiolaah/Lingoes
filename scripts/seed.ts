@@ -50,7 +50,7 @@ const main = async () => {
         id: 1,
         title: "Unit 1",
         description: "Learn the basics",
-        course_id: 2, //French
+        courseId: 2, //French
         order: 1,
       },
     ]);
