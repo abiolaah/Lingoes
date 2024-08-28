@@ -55,6 +55,7 @@ const main = async () => {
       },
     ]);
 
+    // Add lesson
     await db.insert(schema.lessons).values([
       {
         id: 1,
@@ -106,6 +107,7 @@ const main = async () => {
       },
     ]);
 
+    //challenges 1-5 for lesson.id =1
     await db.insert(schema.challenges).values([
       {
         id: 1,
@@ -114,117 +116,303 @@ const main = async () => {
         order: 1,
         question: 'Which one of these is "the man"?',
       },
-      // {
-      //   id: 2,
-      //   lessonId: 1, // Nouns
-      //   type: "ASSIST",
-      //   order: 2,
-      //   question: '"the man"',
-      // },
-      // {
-      //   id: 3,
-      //   lessonId: 1, // Nouns
-      //   type: "SELECT",
-      //   order: 3,
-      //   question: 'Which one of these is the "the robot"?',
-      // },
+      {
+        id: 2,
+        lessonId: 1, // Nouns
+        type: "SELECT",
+        order: 2,
+        question: 'Which one of these is "the robot"?',
+      },
+      {
+        id: 3,
+        lessonId: 1, // Nouns
+        type: "SELECT",
+        order: 3,
+        question: 'Which one of these is "the woman"?',
+      },
+      {
+        id: 4,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 4,
+        question: '"the man"',
+      },
+      {
+        id: 5,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 5,
+        question: '"the woman"',
+      },
     ]);
 
+    /* //challenges 6-10 for lesson.id=1
+    await db.insert(schema.challenges).values([
+      {
+        id: 6,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 6,
+        question: '"the robot"',
+      },
+      {
+        id: 7,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 7,
+        question: '"the boy"',
+      },
+      {
+        id: 8,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 8,
+        question: '"the girl"',
+      },
+      {
+        id: 9,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 9,
+        question: '"the dog"',
+      },
+      {
+        id: 10,
+        lessonId: 1, // Nouns
+        type: "ASSIST",
+        order: 10,
+        question: '"the cat"',
+      },
+    ]); */
+
+    // options for challenge.id=1, lesson.id =1
     await db.insert(schema.challengeOptions).values([
       {
-        id: 1,
         challengeId: 1, // Which one of these is "the man"?
-        imageSrc: "/man.svg",
+        imageSrc: "/characters/man.svg",
         correct: true,
         text: "l'homme",
         audioSrc: "/audio/fr_man.mp3",
       },
       {
-        id: 2,
         challengeId: 1,
-        imageSrc: "/woman.svg",
+        imageSrc: "/characters/woman.svg",
         correct: false,
         text: "la femme",
         audioSrc: "/audio/fr_woman.mp3",
       },
       {
-        id: 3,
         challengeId: 1,
-        imageSrc: "/robot.svg",
+        imageSrc: "/characters/robot.svg",
         correct: false,
         text: "le robot",
         audioSrc: "/audio/fr_robot.mp3",
       },
     ]);
 
-    /*  await db.insert(schema.challengeOptions).values([
-      {
-        challengeId: 2, // "the man"?
-        correct: true,
-        text: "l'homme",
-        audioSrc: "/es_man.mp3",
-      },
-      {
-        challengeId: 2,
-        correct: false,
-        text: "la femme",
-        audioSrc: "/es_woman.mp3",
-      },
-      {
-        challengeId: 2,
-        correct: false,
-        text: "le robot",
-        audioSrc: "/es_robot.mp3",
-      },
-    ]);
-
+    // options for challenge.id=2, lesson.id =1
     await db.insert(schema.challengeOptions).values([
       {
-        challengeId: 3, // Which one of these is the "the robot"?
-        imageSrc: "/man.svg",
+        challengeId: 2, // Which one of these is "the robot"?
+        imageSrc: "/characters/man.svg",
         correct: false,
         text: "l'homme",
-        audioSrc: "/es_man.mp3",
+        audioSrc: "/audio/fr_man.mp3",
       },
       {
-        challengeId: 3,
-        imageSrc: "/woman.svg",
+        challengeId: 2,
+        imageSrc: "/characters/woman.svg",
         correct: false,
         text: "la femme",
-        audioSrc: "/es_woman.mp3",
+        audioSrc: "/audio/fr_woman.mp3",
       },
       {
-        challengeId: 3,
-        imageSrc: "/robot.svg",
+        challengeId: 2,
+        imageSrc: "/characters/robot.svg",
         correct: true,
         text: "le robot",
-        audioSrc: "/es_robot.mp3",
+        audioSrc: "/audio/fr_robot.mp3",
       },
     ]);
 
-    await db.insert(schema.challenges).values([
+    // options for challenge.id=3, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
       {
-        id: 4,
-        lessonId: 2, // Verbs
-        type: "SELECT",
-        order: 1,
-        question: 'Which one of these is the "the woman"?',
+        challengeId: 3, // Which one of these is the "the woman"?
+        imageSrc: "/characters/man.svg",
+        correct: false,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
       },
       {
-        id: 5,
-        lessonId: 2, // Verbs
-        type: "ASSIST",
-        order: 2,
-        question: '"the girl"',
+        challengeId: 3,
+        imageSrc: "/characters/woman.svg",
+        correct: true,
+        text: "la femme",
+        audioSrc: "/audio/fr_woman.mp3",
       },
       {
-        id: 6,
-        lessonId: 2, // Verbs
-        type: "SELECT",
-        order: 3,
-        question: 'Which one of these is the "the robot"?',
+        challengeId: 3,
+        imageSrc: "/characters/robot.svg",
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
+    // options for challenge.id=4, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 4, //  "the man"?
+        correct: true,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+        challengeId: 4,
+        correct: false,
+        text: "la femme",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+        challengeId: 4,
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
+    // options for challenge.id=5, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 5, // "the woman"?
+        correct: false,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+        challengeId: 5,
+        correct: true,
+        text: "la femme",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+        challengeId: 5,
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
+    /* // options for challenge.id=6, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
+      {
+      challengeId: 6, // "the robot"?
+        correct: false,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+      challengeId: 6,
+        correct: false,
+        text: "la femme",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+      challengeId: 6,
+        correct: true,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);  */
+
+    /*  // options for challenge.id=7, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
+      {
+      challengeId: 7, //  "the boy"?
+        correct: false,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+      challengeId: 7,
+        correct: true,
+        text: "le garçon",
+        audioSrc: "/audio/fr_boy.mp3",
+      },
+      {
+      challengeId: 7,
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
       },
     ]); */
+
+    /*  // options for challenge.id=8
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 8, // "the girl"?
+        correct: false,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+      challengeId: 8,
+        correct: false,
+        text: "la femme",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+      challengeId: 8,
+        correct: true,
+        text: "la fille",
+        audioSrc: "/audio/fr_girl.mp3",
+      },
+    ]); */
+
+    /* // options for challenge.id=9, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
+      {
+      challengeId: 6, // "the dog"?
+        correct: true,
+        text: "le chien",
+        audioSrc: "/audio/fr_dog.mp3",
+      },
+      {
+      challengeId: 6,
+        correct: false,
+        text: "le chat",
+        audioSrc: "/audio/fr_cat.mp3",
+      },
+      {
+      challengeId: 6,
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);  */
+
+    /*  // options for challenge.id=10, lesson.id =1
+    await db.insert(schema.challengeOptions).values([
+      {
+      challengeId: 10, // "the cat"?
+        correct: false,
+        text: "l'homme",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+      challengeId: 10,
+        correct: false,
+        text: "le bébé",
+        audioSrc: "/audio/fr_baby.mp3",
+      },
+      {
+      challengeId: 10,
+        correct: true,
+        text: "le chat",
+        audioSrc: "/audio/fr_cat.mp3",
+      },
+    ]);  */
 
     console.log("Seeding finished");
   } catch (error) {
