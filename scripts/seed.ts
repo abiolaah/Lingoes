@@ -414,6 +414,115 @@ const main = async () => {
       },
     ]);  */
 
+    //challenge for lesson id =2
+    await db.insert(schema.challenges).values([
+      {
+        id: 6,
+        lessonId: 2, // Verbs
+        type: "ASSIST",
+        order: 1,
+        question: 'Which one of these means "to make"?',
+      },
+      {
+        id: 7,
+        lessonId: 2, // Verbs
+        type: "ASSIST",
+        order: 2,
+        question: '"to have"',
+      },
+      {
+        id: 8,
+        lessonId: 2, // Verbs
+        type: "ASSIST",
+        order: 3,
+        question: 'How do you say "to be"?',
+      },
+    ]);
+
+    // options for challenge.id=6, lesson.id =2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 6, // Which one of these means "to make"?
+        correct: false,
+        text: "pouvoir",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+        challengeId: 6,
+        correct: false,
+        text: "dire",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+        challengeId: 6,
+        correct: true,
+        text: "faire",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+      {
+        challengeId: 6,
+        correct: false,
+        text: "avoir",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
+    // options for challenge.id=7, lesson.id =2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 7, // "to have"
+        correct: false,
+        text: "dire",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+        challengeId: 7,
+        correct: false,
+        text: "pouvoir",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+        challengeId: 7,
+        correct: false,
+        text: "faire",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+      {
+        challengeId: 7,
+        correct: true,
+        text: "avoir",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
+    // options for challenge.id=8, lesson.id =2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 8, // 'How do you say "to be"?'
+        correct: true,
+        text: "être",
+        audioSrc: "/audio/fr_man.mp3",
+      },
+      {
+        challengeId: 8,
+        correct: false,
+        text: "voir",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+        challengeId: 8,
+        correct: false,
+        text: "aller",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+      {
+        challengeId: 8,
+        correct: false,
+        text: "dire",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
     console.log("Seeding finished");
   } catch (error) {
     console.error(error);
