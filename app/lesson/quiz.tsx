@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useAudio, useWindowSize } from "react-use";
 import Confetti from "react-confetti";
 
@@ -47,8 +47,6 @@ export const Quiz = ({
     src: "/audio/correct.wav",
   });
 
-  const time = 3.45; //TODO: Code to get time it took to finish the quiz
-
   const [incorrectAudio, _i, incorrectControls] = useAudio({
     src: "/audio/incorrect.wav",
   });
@@ -70,8 +68,16 @@ export const Quiz = ({
   const [selectedOption, setSelectedOption] = useState<number>();
   const [status, setStatus] = useState<"correct" | "wrong" | "none">("none");
 
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+
   const challenge = challenges[activeIndex];
   const options = challenge?.challengeOptions ?? [];
+
+  useEffect(() => {
+    //Start the timer when the component mounts
+    setStartTime(new Date());
+  }, []);
 
   const onNext = () => {
     setActiveIndex((current) => current + 1);
@@ -150,6 +156,19 @@ export const Quiz = ({
 
   // console.log(percentage);
 
+  useEffect(() => {
+    if (activeIndex === challenges.length) {
+      setEndTime(new Date());
+    }
+  }, [activeIndex, challenges.length, startTime]);
+
+  const timeTaken =
+    startTime && endTime
+      ? parseFloat(
+          ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
+        )
+      : 0;
+
   if (!challenge) {
     return (
       <>
@@ -183,9 +202,7 @@ export const Quiz = ({
             <ResultCard variant="points" value={challenges.length * 10} />
             <ResultCard variant="hearts" value={hearts} />
             <ResultCard variant="percentage" value={percentage} />
-            <ResultCard variant="time" value={time} />
-            {/* <ResultCard variant="percentage" value={percentage} /> 
-            <ResultCard variant="time" value={challenge.time} /> */}
+            <ResultCard variant="time" value={timeTaken} />
           </div>
         </div>
         <Footer
