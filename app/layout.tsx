@@ -7,6 +7,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { ExitModal } from "@/components/modals/exit-modal";
+import { HeartsModal } from "@/components/modals/hearts-modal";
+import { PracticeModal } from "@/components/modals/practice-modal";
 
 const font = Nunito({ subsets: ["latin"] });
 
@@ -32,6 +34,8 @@ export default function RootLayout({
           >
             <Toaster richColors />
             <ExitModal />
+            <HeartsModal />
+            <PracticeModal />
             {children}
           </ThemeProvider>
         </body>
