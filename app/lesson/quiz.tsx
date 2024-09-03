@@ -175,12 +175,23 @@ export const Quiz = ({
     }
   }, [activeIndex, challenges.length, startTime]);
 
-  const timeTaken =
-    startTime && endTime
-      ? parseFloat(
-          ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-        )
-      : 0;
+  const formatTimeTaken = (start: Date | null, end: Date | null): string => {
+    if (!start || !end) return "0:00";
+
+    const diff = Math.floor((end.getTime() - start.getTime()) / 1000);
+    const minutes = Math.floor(diff / 60);
+    const seconds = diff % 60;
+    return `${minutes}:${seconds}`;
+  };
+
+  const timeTaken = formatTimeTaken(startTime, endTime);
+
+  // const timeTaken =
+  //   startTime && endTime
+  //     ? parseFloat(
+  //         ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
+  //       )
+  //     : 0;
 
   if (!challenge) {
     return (
