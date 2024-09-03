@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   variant: "points" | "hearts" | "percentage" | "time";
-  value: number;
+  value: number | string;
 };
 
 export const ResultCard = ({ variant, value }: Props) => {
@@ -16,6 +16,41 @@ export const ResultCard = ({ variant, value }: Props) => {
       : variant === "percentage"
       ? "/icons/percent.svg"
       : "/icons/timer.svg";
+
+  const percentageHeaderText = (() => {
+    const percentage =
+      typeof value === "number" || !isNaN(Number(value)) ? Number(value) : null;
+    const text =
+      percentage !== null
+        ? percentage >= 90
+          ? "Amazing"
+          : percentage >= 70
+          ? "Great work"
+          : percentage >= 50
+          ? "Good Job"
+          : percentage < 50
+          ? "Practice More"
+          : "Percentage Score"
+        : "Percentage";
+    return text;
+  })();
+
+  const getHeaderText = () => {
+    const boxTitle =
+      variant === "hearts"
+        ? "Hearts Left"
+        : variant === "points"
+        ? "Total XP"
+        : variant === "percentage"
+        ? percentageHeaderText
+        : "Quick";
+
+    return boxTitle;
+  };
+
+  // const grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : score >= 60 ? "D" : "F";
+
+  // const percentageLabel
   return (
     <div
       className={cn(
@@ -35,13 +70,7 @@ export const ResultCard = ({ variant, value }: Props) => {
           variant === "percentage" && "bg-green-300"
         )}
       >
-        {variant === "hearts"
-          ? "Hearts Left"
-          : variant === "points"
-          ? "Total XP"
-          : variant === "percentage"
-          ? "Percentage Score"
-          : "Time taken"}
+        {getHeaderText()}
       </div>
       <div
         className={cn(
@@ -67,7 +96,7 @@ export const ResultCard = ({ variant, value }: Props) => {
           height={30}
           className="mr-1.5"
         />
-        {value}
+        {variant === "time" ? value : Number(value)}
       </div>
     </div>
   );
