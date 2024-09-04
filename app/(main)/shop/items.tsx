@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 import { refillHearts } from "@/actions/user-progress";
+import { createStripeUrl } from "@/actions/user-subscription";
 
 export const POINTS_TO_REFILL = 10;
 
@@ -30,36 +31,66 @@ export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
       refillHearts().catch(() => toast.error("Something went wrong"));
     });
   };
+
+  const onUpgrade = () => {
+    startTransition(() => {
+      createStripeUrl()
+        .then((response) => {
+          if (response.data) {
+            toast.info("You are being redirected to checkout");
+            window.location.href = response.data;
+          }
+        })
+        .catch(() => toast.error("Something went wrong!"));
+      toast.success("Subscription done!");
+    });
+  };
+
   return (
-    <>
-      <ul className="w-full">
-        <div className="flex items-center w-full p-4 gap-x-24 border-t-2">
-          <Image src="/icons/heart.svg" alt="Heart" height={60} width={60} />
-          <div className="flex-1">
-            <p className="text-neutral-700 text-base lg:text-xl font-bold">
-              Refill Hearts
-            </p>
-          </div>
-          <Button
-            onClick={onRefillHearts}
-            disabled={pending || hearts === 5 || points < POINTS_TO_REFILL}
-          >
-            {hearts === 5 ? (
-              "full"
-            ) : (
-              <div className="flex items-center">
-                <Image
-                  src="/icons/points.svg"
-                  alt="Points"
-                  height={20}
-                  width={20}
-                />
-                <p>{POINTS_TO_REFILL}</p>
-              </div>
-            )}
-          </Button>
+    <ul className="w-full">
+      <div className="flex items-center w-full p-4 gap-x-4 border-t-2">
+        <Image src="/icons/heart.svg" alt="Heart" height={60} width={60} />
+        <div className="flex-1">
+          <p className="text-neutral-700 text-base lg:text-xl font-bold">
+            Refill Hearts
+          </p>
         </div>
-      </ul>
-    </>
+        <Button
+          onClick={onRefillHearts}
+          disabled={pending || hearts === 5 || points < POINTS_TO_REFILL}
+        >
+          {hearts === 5 ? (
+            "full"
+          ) : (
+            <div className="flex items-center">
+              <Image
+                src="/icons/points.svg"
+                alt="Points"
+                height={20}
+                width={20}
+              />
+              <p>{POINTS_TO_REFILL}</p>
+            </div>
+          )}
+        </Button>
+      </div>
+
+      <div className="flex items-center w-full p-4 pt-8 gap-x-8 border-t-2">
+        <Image
+          src="/icons/unlimited.svg"
+          alt="Unlimited"
+          height={60}
+          width={60}
+        />
+        <div className="flex-1">
+          <p className="text-neutral-700 text-base lg:text-xl font-bold">
+            Unlimited Hearts
+          </p>
+        </div>
+        <Button onClick={onUpgrade} disabled={pending}>
+          {hasActiveSubscription ? "Settings" : "Upgrade"}
+        </Button>
+      </div>
+    </ul>
   );
 };
