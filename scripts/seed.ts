@@ -437,6 +437,34 @@ const main = async () => {
         order: 3,
         question: 'How do you say "to be"?',
       },
+      {
+        id: 9,
+        lessonId: 2, // Nouns cont'd
+        type: "SELECT",
+        order: 3,
+        question: 'Which one of these is "the girl"?',
+      },
+      {
+        id: 10,
+        lessonId: 2, // Nouns cont'd
+        type: "SELECT",
+        order: 3,
+        question: 'Which one of these is "the boy"?',
+      },
+      {
+        id: 11,
+        lessonId: 2, // Nouns cont'd
+        type: "SELECT",
+        order: 3,
+        question: 'Which one of these is "the bread"?',
+      },
+      {
+        id: 12,
+        lessonId: 2, // Nouns cont'd
+        type: "SELECT",
+        order: 3,
+        question: 'Which one of these is "the apple"?',
+      },
     ]);
 
     // options for challenge.id=6, lesson.id =2
@@ -523,6 +551,105 @@ const main = async () => {
       },
     ]);
 
+    //options for challenge.id=9, lesson.id=2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 9,
+        imageSrc: "/characters/girl.svg",
+        correct: false,
+        text: "la fille",
+        audioSrc: "/audio/fr_girl.mp3",
+      },
+      {
+        challengeId: 9,
+        imageSrc: "/characters/woman.svg",
+        correct: false,
+        text: "la femme",
+        audioSrc: "/audio/fr_woman.mp3",
+      },
+      {
+        challengeId: 9,
+        imageSrc: "/characters/robot.svg",
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+    ]);
+
+    //options for challenge.id=10, lesson.id=2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 10,
+        imageSrc: "/characters/robot.svg",
+        correct: false,
+        text: "le robot",
+        audioSrc: "/audio/fr_robot.mp3",
+      },
+      {
+        challengeId: 10,
+        imageSrc: "/characters/girl.svg",
+        correct: false,
+        text: "la fille",
+        audioSrc: "/audio/fr_girl.mp3",
+      },
+      {
+        challengeId: 10,
+        imageSrc: "/characters/boy.svg",
+        correct: true,
+        text: "le garçon",
+        audioSrc: "/audio/fr_boy.mp3",
+      },
+    ]);
+
+    //options for challenge.id=11, lesson.id=2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 11, // Which one of these is "the bread"?
+        imageSrc: "/characters/bread.svg",
+        correct: true,
+        text: "le pain",
+        audioSrc: "/audio/fr_bread.mp3",
+      },
+      {
+        challengeId: 11,
+        imageSrc: "/characters/apple.svg",
+        correct: false,
+        text: "la pomme",
+        audioSrc: "/audio/fr_apple.mp3",
+      },
+      {
+        challengeId: 11,
+        imageSrc: "/characters/banana.svg",
+        correct: false,
+        text: "la banane",
+        audioSrc: "/audio/fr_banana.mp3",
+      },
+    ]);
+
+    //options for challenge.id=12, lesson.id=2
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 12, // Which one of these is "the apple"?
+        imageSrc: "/characters/bread.svg",
+        correct: false,
+        text: "le pain",
+        audioSrc: "/audio/fr_bread.mp3",
+      },
+      {
+        challengeId: 12,
+        imageSrc: "/characters/apple.svg",
+        correct: true,
+        text: "la pomme",
+        audioSrc: "/audio/fr_apple.mp3",
+      },
+      {
+        challengeId: 12,
+        imageSrc: "/characters/banana.svg",
+        correct: false,
+        text: "la banane",
+        audioSrc: "/audio/fr_banana.mp3",
+      },
+    ]);
     console.log("Seeding finished");
   } catch (error) {
     console.error(error);
