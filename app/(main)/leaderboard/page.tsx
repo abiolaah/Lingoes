@@ -12,6 +12,8 @@ import { UserProgress } from "@/components/user-progress";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Promo } from "@/components/promo";
+import { Quests } from "@/components/quests";
 
 const LeaderboardPage = async () => {
   const userProgressPromise = getUserProgress();
@@ -39,6 +41,8 @@ const LeaderboardPage = async () => {
           points={userProgress.points}
           hasActiveSubscription={isPro}
         />
+        {!isPro && <Promo />}
+        <Quests points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
         <div className="w-full flex flex-col items-center">
