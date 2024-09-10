@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Promo } from "@/components/promo";
 import { Quests } from "@/components/quests";
+import { Leaderboard } from "@/components/leaderboard";
 
 const LeaderboardPage = async () => {
   const userProgressPromise = getUserProgress();

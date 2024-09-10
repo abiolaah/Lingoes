@@ -29,6 +29,8 @@ const buttonVariants = cva(
           "bg-transparent text-slate-500 border-2 border-transparent hover:bg-slate-100 transition-none",
         sidebarOutline:
           "bg-sky-500/15 text-sky-500 border-sky-300 border-2 hover:bg-sky-500/20 transition-none",
+        pro: "bg-gradient-to-r from-indigo-400 to-purple-600 text-primary-foreground hover:bg-indigo-500/90 border-indigo-600 border-b-4 active:border-b-0",
+        proOutline: "bg-white text-purple-600 hover:bg-slate-100",
         locked:
           "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-400 border-b-4 active:border-b-0",
       },

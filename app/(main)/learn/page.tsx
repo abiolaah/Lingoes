@@ -10,12 +10,14 @@ import { Header } from "./header";
 import {
   getCourseProgress,
   getLessonPercentage,
+  getTopTenUsers,
   getUnits,
   getUserProgress,
   getUserSubscription,
 } from "@/db/queries";
 import { Unit } from "./unit";
 import { lessons, units as unitsSchema } from "@/db/schema";
+import { Leaderboard } from "@/components/leaderboard";
 
 const LearnPage = async () => {
   const userProgressPromise = getUserProgress();
@@ -23,6 +25,7 @@ const LearnPage = async () => {
   const lessonPercentagePromise = getLessonPercentage();
   const unitsPromise = getUnits();
   const userSubscriptionPromise = getUserSubscription();
+  const leaderboardPromise = getTopTenUsers();
 
   const [
     userProgress,
@@ -30,12 +33,14 @@ const LearnPage = async () => {
     courseProgress,
     lessonPercentage,
     userSubscription,
+    leaderboardData,
   ] = await Promise.all([
     userProgressPromise,
     unitsPromise,
     courseProgressPromise,
     lessonPercentagePromise,
     userSubscriptionPromise,
+    leaderboardPromise,
   ]);
 
   if (!userProgress || !userProgress.activeCourse) {
@@ -57,7 +62,7 @@ const LearnPage = async () => {
           points={userProgress.points}
           hasActiveSubscription={!!userSubscription?.isActive}
         />
-        {!isPro && <Promo />}
+        {!isPro ? <Promo /> : <Leaderboard data={leaderboardData} />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
