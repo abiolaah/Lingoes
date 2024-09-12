@@ -46,6 +46,11 @@ export const Quiz = ({
   const { open: openHeartsModal } = useHeartsModal();
   const { open: openPracticeModal } = usePracticeModal();
 
+  const MAX_PERCENTAGE = 100;
+  const CHALLENGE_WEIGHT = Math.ceil(
+    MAX_PERCENTAGE / initialLessonChallenge.length
+  );
+
   useMount(() => {
     if (initialPercentage === 100) {
       openPracticeModal();
@@ -74,6 +79,9 @@ export const Quiz = ({
   const [percentage, setPercentage] = useState(() => {
     return initialPercentage === 100 ? 0 : initialPercentage;
   });
+
+  const [lessonPercentage, setLessonPercentage] = useState(0);
+
   const [challenges] = useState(initialLessonChallenge);
   const [activeIndex, setActiveIndex] = useState(() => {
     const uncompletedIndex = challenges.findIndex(
@@ -138,6 +146,7 @@ export const Quiz = ({
             correctControls.play();
             setStatus("correct");
             setPercentage((prev) => prev + 100 / challenges.length);
+            setLessonPercentage((prev) => prev + CHALLENGE_WEIGHT);
 
             if (initialPercentage === 100) {
               setHearts((prev) => Math.min(prev + 1, 5));
@@ -156,8 +165,8 @@ export const Quiz = ({
 
             incorrectControls.play();
             setStatus("wrong");
-            setPercentage((prev) => {
-              const weight = Math.ceil(100 / challenges.length);
+            setLessonPercentage((prev) => {
+              const weight = CHALLENGE_WEIGHT;
               if (prev === 0 || (prev > 0 && prev < weight)) return 0;
               return prev - weight;
             });
@@ -170,8 +179,6 @@ export const Quiz = ({
       });
     }
   };
-
-  // console.log(percentage);
 
   useEffect(() => {
     if (activeIndex === challenges.length) {
@@ -189,13 +196,6 @@ export const Quiz = ({
   };
 
   const timeTaken = formatTimeTaken(startTime, endTime);
-
-  // const timeTaken =
-  //   startTime && endTime
-  //     ? parseFloat(
-  //         ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-  //       )
-  //     : 0;
 
   if (!challenge) {
     return (
@@ -229,7 +229,7 @@ export const Quiz = ({
           <div className="flex items-center gap-x-4 w-full justify-evenly">
             <ResultCard variant="points" value={challenges.length * 10} />
             <ResultCard variant="hearts" value={hearts} />
-            <ResultCard variant="percentage" value={percentage} />
+            <ResultCard variant="percentage" value={lessonPercentage} />
             <ResultCard variant="time" value={timeTaken} />
           </div>
         </div>
