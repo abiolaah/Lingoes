@@ -1,0 +1,98 @@
+const sectionTest = [
+    {
+        id: 1,
+        title: 'Section 1',
+        level: 'A1',
+        description: 'Start with essential phrases and simple grammar concepts',
+        phrase: 'Bonjour!',
+        totalUnit: 10,
+        percentage: 100,
+        completed: true,
+        active: false,
+
+    },
+    {
+        id: 2,
+        title: 'Section 2',
+        level: 'A1',
+        description: 'Learn words, phrases, and grammar concepts for basic interactions',
+        phrase: 'Je commence en français.',
+        totalUnit: 22,
+        percentage: 100,
+        completed: true,
+        active: false,
+
+    },
+    {
+        id: 3,
+        title: 'Section 3',
+        level: 'A1',
+        description: 'Learn more foundational concepts and sentences for basic conversations',
+        phrase: 'Je connais quelques mots.',
+        totalUnit: 21,
+        percentage: 9.5,
+        completed: false,
+        active: true,
+
+    },
+    {
+        id: 4,
+        title: 'Section 4',
+        level: 'A2',
+        description: 'Use sentences in conversations about everyday topics',
+        phrase: 'Je peux parler un peu avec des gens.',
+        totalUnit: 46,
+        percentage: 0,
+        completed: false,
+        active: false,
+
+    },
+    {
+        id: 5,
+        title: 'Section 5',
+        level: 'B1',
+        description: 'Form sentences about a wider variety of topics',
+        phrase: 'Je peux participer à la vie quotidienne en français',
+        totalUnit: 51,
+        percentage: 0,
+        completed: false,
+        active: false,
+
+    },
+    {
+        id: 6,
+        title: 'Section 6',
+        level: 'B1',
+        description: 'Communicate more complex ideas in conversations',
+        phrase: 'Je peux m'exprimer différemment selon le contexte.',
+        totalUnit: 49,
+        percentage: 0,
+        completed: false,
+        active: false,
+
+    },
+    {
+        id: 7,
+        title: 'Section 7',
+        level: 'B2',
+        description: 'Talk about abstract feelings and opinions',
+        phrase: `J'arrive à m'exprimer sur des sujets abstraits, comme mes espoirs, buts et projets.`,
+        totalUnit: 36,
+        percentage: 0,
+        completed: true,
+        active: false,
+
+    },
+    {
+        id: 8,
+        title: 'Section 8',
+        level: 'B2',
+        description: 'Converse confidently, even about some specialized topics',
+        phrase: `Je me sens à l'aise en français et je peux m'exprimer spontanément sur des sujets divers.`,
+        totalUnit: 37,
+        percentage: 10,
+        completed: true,
+        active: false,
+
+    },
+]
