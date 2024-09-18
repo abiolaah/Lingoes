@@ -34,6 +34,7 @@ export const courseSections = pgTable("course_sections", {
   sectionId: integer("section_id")
     .notNull()
     .references(() => sections.id, { onDelete: "cascade" }),
+  sectionPhrase: text("section_phrase").notNull(),
   order: integer("order").notNull(), // Position of section within a course
 });
 

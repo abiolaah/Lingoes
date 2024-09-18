@@ -2,7 +2,8 @@ import { sectionDetails } from "@/lib/data/sectiondata";
 import {
   getCourseSections,
   getUserProgress,
-  getCourseSectionDetails,
+  getTotalUnitsInSection,
+  getCompletedUnits,
   getUserSubscription,
   getTopTenUsers,
 } from "@/db/queries";
@@ -16,8 +17,12 @@ import { Quests } from "@/components/quests";
 import { redirect } from "next/navigation";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { Header } from "./header";
+import { number } from "react-admin";
 
 const SectionPage = async () => {
+  let section_id = 0;
+  let user_id = "";
+
   const courseSectionPromise = getCourseSections();
   const userProgressPromise = getUserProgress();
   const userSubscriptionPromise = getUserSubscription();
@@ -34,6 +39,30 @@ const SectionPage = async () => {
   if (!userProgress) {
     redirect("/courses");
   }
+
+  if (!sections) {
+    redirect("/courses");
+  }
+
+  const details = sections
+    .flat()
+    .find((section) => section.courseId === userProgress.activeCourseId);
+
+  if (!details) return null;
+
+  const totalUnit = await getTotalUnitsInSection(details?.id);
+  const completedUnit = await getCompletedUnits(
+    details?.id,
+    userProgress.userId
+  );
+
+  // console.log("SECTION DATA", sections);
+  console.log("SECTION Title", details.section.title);
+  console.log("SECTION Level", details.section.level);
+  console.log("SECTION Description", details.section.description);
+  console.log("SECTION Phrase", details.sectionPhrase);
+  console.log("SECTION Units", totalUnit);
+  console.log("SECTION Completed Units", completedUnit);
 
   const isPro = !!userSubscription?.isActive;
 

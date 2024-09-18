@@ -12,8 +12,8 @@ import {
   units,
   userProgress,
   userSubscription,
-} from "@/db/schema-design";
-import { sectionProgress } from "./schema";
+  sectionProgress,
+} from "@/db/schema";
 
 //Get user progress
 export const getUserProgress = cache(async () => {
@@ -190,6 +190,7 @@ export const getCourseSections = cache(async () => {
     orderBy: (courseSections, { asc }) => [asc(courseSections.order)],
     where: eq(courseSections.courseId, userProgress.activeCourseId),
     with: {
+      section: true,
       units: {
         orderBy: (units, { asc }) => [asc(units.order)],
         with: {
@@ -211,9 +212,6 @@ export const getCourseSections = cache(async () => {
     },
   });
 
-  //   const normalizedSection = data.map((section) => {
-
-  //   })
   return data;
 });
 
@@ -405,7 +403,7 @@ export const getTopTenUsers = cache(async () => {
   return data;
 });
 
-// Get detailed information for a course section, including progress and completion status
+// Get detailed information for a course section, including progress and completion status May need to be deleted
 export const getCourseSectionDetails = cache(async (sectionId: number) => {
   const { userId } = await auth();
   if (!userId) return null;
@@ -478,6 +476,9 @@ export const getSectionProgress = cache(async (sectionId: number) => {
     return null;
   }
 
+  const completedUnits = await getCompletedUnits(sectionId, userId);
+  const totalUnits = await getTotalUnitsInSection(sectionId);
+
   const data = await db.query.sectionProgress.findFirst({
     where: and(
       eq(sectionProgress.courseSectionId, sectionId),
@@ -488,7 +489,17 @@ export const getSectionProgress = cache(async (sectionId: number) => {
     },
   });
 
-  return data;
+  const percentage = Math.round(completedUnits / totalUnits) * 100;
+
+  const completed = percentage === 100;
+
+  return {
+    data,
+    totalUnits,
+    completedUnits,
+    percentage,
+    completed,
+  };
 });
 
 // Get total number of units in a course section
@@ -502,6 +513,7 @@ export const getTotalUnitsInSection = cache(async (sectionId: number) => {
 
 export const getCompletedUnits = cache(
   async (courseSectionId: number, userId: string) => {
+    // const {userId} = await auth();
     const unitsWithCompletedLessons = await db.query.units.findMany({
       where: eq(units.courseSectionId, courseSectionId),
       with: {

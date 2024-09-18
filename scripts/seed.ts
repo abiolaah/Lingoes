@@ -120,48 +120,56 @@ const courseSectionsPopulation = async () => {
       id: 1, //COURSE 1, SECTION 1
       courseId: 1,
       sectionId: 1,
+      sectionPhrase: `Bonjour!`,
       order: 1,
     },
     {
       id: 2, //COURSE 1, SECTION 2
       courseId: 1,
       sectionId: 2,
+      sectionPhrase: `Je commence en français.`,
       order: 2,
     },
     {
       id: 3, //COURSE 1, SECTION 3
       courseId: 1,
       sectionId: 3,
+      sectionPhrase: `Je connais quelques mots.`,
       order: 3,
     },
     {
       id: 4, //COURSE 1, SECTION 4
       courseId: 1,
       sectionId: 4,
+      sectionPhrase: `Je peux parler un peu avec des gens.`,
       order: 4,
     },
     {
       id: 5, //COURSE 1, SECTION 5
       courseId: 1,
       sectionId: 5,
+      sectionPhrase: `Je peux participer à la vie quotidienne en français`,
       order: 5,
     },
     {
       id: 6, //COURSE 1, SECTION 6
       courseId: 1,
       sectionId: 6,
+      sectionPhrase: `Je peux m'exprimer différemment selon le contexte.`,
       order: 6,
     },
     {
       id: 7, //COURSE 1, SECTION 7
       courseId: 1,
       sectionId: 7,
+      sectionPhrase: `J'arrive à m'exprimer sur des sujets abstraits, comme mes espoirs, buts et projets.`,
       order: 7,
     },
     {
       id: 8, //COURSE 1, SECTION 8
       courseId: 1,
       sectionId: 8,
+      sectionPhrase: `Je me sens à l'aise en français et je peux m'exprimer spontanément sur des sujets divers.`,
       order: 8,
     },
   ]);
@@ -172,48 +180,56 @@ const courseSectionsPopulation = async () => {
       id: 9, //COURSE 2, SECTION 1
       courseId: 2,
       sectionId: 1,
+      sectionPhrase: `¡Hola!`,
       order: 9,
     },
     {
       id: 10, //COURSE 2, SECTION 2
       courseId: 2,
       sectionId: 2,
+      sectionPhrase: `Quiero aprender español.`,
       order: 10,
     },
     {
       id: 11, //COURSE 2, SECTION 3
       courseId: 2,
       sectionId: 3,
+      sectionPhrase: `Sé algunas palabras.`,
       order: 11,
     },
     {
       id: 12, //COURSE 2, SECTION 4
       courseId: 2,
       sectionId: 4,
+      sectionPhrase: `Puedo hablar un poco de español con mis amigos.`,
       order: 12,
     },
     {
       id: 13, //COURSE 2, SECTION 5
       courseId: 2,
       sectionId: 5,
+      sectionPhrase: `Soy capaz de usar español en mi vida cotidiana.`,
       order: 13,
     },
     {
       id: 14, //COURSE 2, SECTION 6
       courseId: 2,
       sectionId: 6,
+      sectionPhrase: `Puedo usar expresiones diferentes de acuerdo al contexto social.`,
       order: 14,
     },
     {
       id: 15, //COURSE 2, SECTION 7
       courseId: 2,
       sectionId: 7,
+      sectionPhrase: `Puedo discutir temas abstractos como mis sueños, metas y proyectos de vida.`,
       order: 15,
     },
     {
       id: 16, //COURSE 2, SECTION 8
       courseId: 2,
       sectionId: 8,
+      sectionPhrase: `Me resulta fácil conversar en español sobre diferentes temas incluso en situaciones imprevistas`,
       order: 16,
     },
   ]);
@@ -316,7 +332,7 @@ const unitsPopulation = async () => {
 };
 const lessonsPopulation = async () => {
   console.log("Populating Lessons.....");
-  // Add lesson
+  // Add lessons for Course 1 Section 1 French Section 1 Unit 1
   await db.insert(schema.lessons).values([
     {
       id: 1,
@@ -343,6 +359,8 @@ const lessonsPopulation = async () => {
       order: 4,
     },
   ]);
+
+  // Add lessons for Course 1 Section 1 French Section 1 Unit 2
   await db.insert(schema.lessons).values([
     {
       id: 5,
@@ -373,6 +391,68 @@ const lessonsPopulation = async () => {
       title: "Review",
       unitId: 2,
       order: 9,
+    },
+  ]);
+
+  // Add lessons for Course 2 Section 1 Spanish Section 1 Unit 1
+  await db.insert(schema.lessons).values([
+    {
+      id: 10,
+      title: "Identifying people and object",
+      unitId: 7,
+      order: 10,
+    },
+    {
+      id: 11,
+      title: "Understanding gender nouns",
+      unitId: 7,
+      order: 11,
+    },
+    {
+      id: 12,
+      title: "Using verbs",
+      unitId: 7,
+      order: 12,
+    },
+    {
+      id: 13,
+      title: "Review",
+      unitId: 7,
+      order: 13,
+    },
+  ]);
+
+  // Add lessons for Course 2 Section 1 Spanish Section 1 Unit 2
+  await db.insert(schema.lessons).values([
+    {
+      id: 14,
+      title: "Salutations",
+      unitId: 8,
+      order: 14,
+    },
+    {
+      id: 15,
+      title: "Basic Greetings",
+      unitId: 8,
+      order: 15,
+    },
+    {
+      id: 16,
+      title: "Meeting next time",
+      unitId: 8,
+      order: 16,
+    },
+    {
+      id: 17,
+      title: "First time meeting",
+      unitId: 8,
+      order: 17,
+    },
+    {
+      id: 18,
+      title: "Review",
+      unitId: 8,
+      order: 18,
     },
   ]);
   console.log("Populating Lessons Finished");
