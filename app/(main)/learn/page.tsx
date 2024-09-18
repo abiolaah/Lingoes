@@ -9,6 +9,8 @@ import { Quests } from "@/components/quests";
 import { Header } from "./header";
 import {
   getCourseProgress,
+  getCourseSections,
+  getCourseSectionById,
   getLessonPercentage,
   getTopTenUsers,
   getUnits,
@@ -47,6 +49,8 @@ const LearnPage = async () => {
     redirect("/courses");
   }
 
+  const sectionTitle = "Section 1";
+
   if (!courseProgress) {
     redirect("/courses");
   }
@@ -74,6 +78,7 @@ const LearnPage = async () => {
               order={unit.order}
               description={unit.description}
               title={unit.title}
+              section={sectionTitle}
               lessons={unit.lessons}
               activeLesson={
                 courseProgress.activeLesson as

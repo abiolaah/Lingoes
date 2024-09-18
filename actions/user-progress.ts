@@ -12,7 +12,6 @@ import {
   getUserSubscription,
 } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
-import { error } from "console";
 import { POINTS_TO_REFILL } from "@/constants";
 
 export const upsertUserProgress = async (courseId: number) => {
@@ -29,7 +28,11 @@ export const upsertUserProgress = async (courseId: number) => {
     throw new Error("Course not found");
   }
 
-  if (!course.units.length || !course.units[0].lessons.length) {
+  if (
+    !course.sections.length ||
+    !course.sections[0].units.length ||
+    !course.sections[0].units[0].lessons.length
+  ) {
     throw new Error("Course is empty");
   }
 
