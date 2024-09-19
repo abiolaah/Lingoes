@@ -16,7 +16,11 @@ export const UnitCreate = () => {
           validate={[required()]}
           label="Description"
         />
-        <ReferenceInput source="courseId" reference="courses" />
+        <ReferenceInput
+          source="courseSectionId"
+          reference="course_sections"
+          label="Section"
+        />
         <NumberInput source="order" validate={[required()]} label="Order" />
       </SimpleForm>
     </Create>

@@ -17,7 +17,11 @@ export const UnitEdit = () => {
           validate={[required()]}
           label="Description"
         />
-        <ReferenceInput source="courseId" reference="courses" />
+        <ReferenceInput
+          source="courseSectionId"
+          reference="courseSections"
+          label="Section"
+        />
         <NumberInput source="order" validate={[required()]} label="Order" />
       </SimpleForm>
     </Edit>

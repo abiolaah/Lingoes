@@ -12,7 +12,11 @@ export const UnitList = () => {
         <TextField source="id" />
         <TextField source="title" />
         <TextField source="description" />
-        <ReferenceField source="courseId" reference="courses" />
+        <ReferenceField
+          source="courseSectionId"
+          reference="courseSections"
+          label="Section"
+        />
         <NumberField source="order" />
       </Datagrid>
     </List>
