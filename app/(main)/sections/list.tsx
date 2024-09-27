@@ -1,37 +1,38 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
-import { courseSections, userProgress } from "@/db/schema";
-
 import { Card } from "./card";
-import { upsertSectionProgress } from "@/actions/sections-progress";
-
-import { useEffect, useState, useTransition } from "react";
-import { toast } from "sonner";
-import { getCourseSectionDetails } from "@/db/queries";
+// import { upsertSectionProgress } from "@/actions/sections-progress";
 
 type Props = {
-  details: any[];
+  details: {
+    sectionId: number;
+    title: string;
+    level: string;
+    sectionPhrase: string;
+    totalUnits: number;
+    completedUnits: number;
+    progress: number;
+    completed?: boolean;
+    active?: boolean;
+  }[];
 };
 
 export const List = ({ details }: Props) => {
   // Debug log
-  console.log("DETAILS:", details);
+  // console.log("DETAILS:", details);
   return (
     <div className="flex flex-col gap-2 items-center justify-center lg:pt-6 lg:flex lg:flex-col lg:gap-4">
       {details.map((detail) => (
         <Card
-          key={detail.id}
-          id={detail.id}
+          key={detail.sectionId}
+          sectionId={detail.sectionId}
           title={detail.title}
           level={detail.level}
-          totalUnit={detail.totalUnit}
-          phrase={detail.phrase}
-          percentage={detail.percentage}
-          disabled={!detail.active}
+          sectionPhrase={detail.sectionPhrase}
+          totalUnits={detail.totalUnits}
+          completedUnits={detail.completedUnits}
+          percentage={detail.progress}
           completed={detail?.completed}
           active={detail.active}
+          disabled={!detail.active}
         />
       ))}
     </div>

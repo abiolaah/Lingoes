@@ -1,18 +1,21 @@
+"use client";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { boolean } from "drizzle-orm/mysql-core";
 import { Check, Dot, Lock, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bubble } from "./bubble";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+// import { useRouter } from "next/compat/router";
 
 type Props = {
-  id: number;
+  sectionId: number;
   title: string;
   level: string;
-  totalUnit: number;
-  phrase: string;
+  sectionPhrase: string;
+  totalUnits: number;
+  completedUnits: number;
   percentage: number;
   disabled?: boolean;
   completed?: boolean;
@@ -20,21 +23,46 @@ type Props = {
 };
 
 export const Card = ({
-  id,
+  sectionId,
   title,
   level,
-  totalUnit,
-  phrase,
+  sectionPhrase,
+  totalUnits,
+  completedUnits,
   percentage,
   disabled,
   completed,
   active,
 }: Props) => {
+  const router = useRouter();
+
+  // function to handle routing to learn page with appropriate section' units
+  // const handleNavigation = () => {
+  //   console.log("ROUTER VALUE", router);
+  //   router?.push({
+  //     pathname: "/learn",
+  //     query: { sectionId: id },
+  //   });
+  //   console.log("SECTION ID", id);
+  // };
+  // const handleNavigation = () => {
+  //   if (sectionId !== undefined) {
+  //     console.log("Navigating to section:", sectionId); // Ensure `id` is not undefined
+  //     router.push(`/learn?sectionId=${sectionId}`); // Navigate to the learn page with sectionId in query
+  //     //TODO: Figure out how to hidden the section id part of the url
+  //   } else {
+  //     console.error("Section ID is undefined");
+  //   }
+  // };
+  const handleNavigation = () => {
+    console.log("Navigating to learn!");
+    router.push("/learn"); // Navigate to the learn page with sectionId in query
+  };
   return (
     <div
       className={cn(
         "h-[250px] w-[450px] flex flex-col-reverse lg:flex-row justify-between min-h-[100px] min-w-[250px] pt-2 pb-4 px-4 border-2 rounded-xl border-b-4 hover:bg-black/5 hover:dark:bg-white/5 cursor-pointer active:border-b-2 gap-2",
-        !active && "bg-gray-200 text-slate-500",
+        disabled && "bg-gray-200 text-slate-500",
         completed && "bg-opacity-5 text-slate-800 h-fit",
         active && "lg:bg-sky-100"
       )}
@@ -50,7 +78,7 @@ export const Card = ({
               id="level-details-div"
             >
               <Link
-                href={`/sections/details/${id}`}
+                href={`/sections/details/${sectionId}`}
                 className="flex text-sky-400 font-bold"
               >
                 <p className="text-sky-400 font-bold">{level}</p>
@@ -94,18 +122,26 @@ export const Card = ({
                   <Progress value={percentage} className="w-full" />
                   <Trophy className="text-green-500" width={30} height={30} />
                 </div>
-                <Button variant="primary" className="lg:flex hidden">
-                  <Link href="/learn">Continue</Link>
+                <Button
+                  variant="primary"
+                  className="lg:flex hidden"
+                  onClick={handleNavigation}
+                >
+                  Continue
                 </Button>
               </div>
             ) : completed ? (
               <div className=""></div>
             ) : (
-              <div className="lg:mt-24">
-                <Button className="flex">
-                  <Link href="/learn" className="text-sky-400">
-                    Jump To {title}
-                  </Link>
+              <div className="">
+                <div className="flex gap-1 mt-4">
+                  <Lock className="text-neutral-400 font-bold" />
+                  <p className="text-neutral-400 font-bold uppercase">
+                    {totalUnits} units
+                  </p>
+                </div>
+                <Button className="flex lg:mt-8" onClick={handleNavigation}>
+                  Jump To {title}
                 </Button>
               </div>
             )}
@@ -114,11 +150,15 @@ export const Card = ({
       </div>
       <div>
         {!completed ? (
-          <Bubble text={phrase} />
+          <Bubble text={sectionPhrase} />
         ) : (
           <div className="hidden lg:flex lg:items-center lg:justify-end">
             <Button>
-              <Link href="/learn" className="text-sky-400">
+              <Link
+                href="/learn"
+                className="text-sky-400"
+                onClick={handleNavigation}
+              >
                 Review
               </Link>
             </Button>

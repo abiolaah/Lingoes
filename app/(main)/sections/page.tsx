@@ -6,6 +6,7 @@ import {
   getCompletedUnits,
   getUserSubscription,
   getTopTenUsers,
+  getCourseSectionInfo,
 } from "@/db/queries";
 
 import { List } from "./list";
@@ -17,52 +18,43 @@ import { Quests } from "@/components/quests";
 import { redirect } from "next/navigation";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { Header } from "./header";
-import { number } from "react-admin";
 
 const SectionPage = async () => {
-  let section_id = 0;
-  let user_id = "";
-
-  const courseSectionPromise = getCourseSections();
+  const courseSectionInfoPromise = getCourseSectionInfo();
   const userProgressPromise = getUserProgress();
   const userSubscriptionPromise = getUserSubscription();
   const leaderboardPromise = getTopTenUsers();
 
-  const [sections, userProgress, userSubscription, leaderboardData] =
+  const [sectionsInfo, userProgress, userSubscription, leaderboardData] =
     await Promise.all([
-      courseSectionPromise,
+      courseSectionInfoPromise,
       userProgressPromise,
       userSubscriptionPromise,
       leaderboardPromise,
     ]);
 
+  if (!sectionsInfo) {
+    redirect("/courses");
+  }
+
+  // Check if sectionsInfo has the correct structure
+  const sectionsInfoData = sectionsInfo.map((section: any) => ({
+    sectionId: section.sectionId || 0, // Ensure sectionId is provided or default to 0
+    title: section.title || "Untitled", // Fallback for missing title
+    level: section.level || "Beginner", // Default level if not provided
+    sectionPhrase: section.sectionPhrase || "Default Phrase",
+    totalUnits: section.totalUnits || 0, // Ensure totalUnits is a number
+    completedUnits: section.completedUnits || 0, // Ensure completedUnits is a number
+    progress: section.progress || 0, // Ensure progress is a number
+    completed: section.completed || false, // Fallback to false if not completed
+    active: section.active || false, // Fallback to false if not active
+  }));
+
   if (!userProgress) {
     redirect("/courses");
   }
 
-  if (!sections) {
-    redirect("/courses");
-  }
-
-  const details = sections
-    .flat()
-    .find((section) => section.courseId === userProgress.activeCourseId);
-
-  if (!details) return null;
-
-  const totalUnit = await getTotalUnitsInSection(details?.id);
-  const completedUnit = await getCompletedUnits(
-    details?.id,
-    userProgress.userId
-  );
-
-  // console.log("SECTION DATA", sections);
-  console.log("SECTION Title", details.section.title);
-  console.log("SECTION Level", details.section.level);
-  console.log("SECTION Description", details.section.description);
-  console.log("SECTION Phrase", details.sectionPhrase);
-  console.log("SECTION Units", totalUnit);
-  console.log("SECTION Completed Units", completedUnit);
+  // console.log("SECTION INFO @page.tsx", sectionsInfo);
 
   const isPro = !!userSubscription?.isActive;
 
@@ -84,7 +76,8 @@ const SectionPage = async () => {
       </StickyWrapper>
       <FeedWrapper>
         <Header href="/learn" text="Back" />
-        <List details={sectionDetails} />
+        <List details={sectionsInfoData} />
+        {/* <List details={sectionDetails} /> */}
       </FeedWrapper>
     </div>
   );

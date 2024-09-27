@@ -63,6 +63,7 @@ export const courseSectionsRelations = relations(
       references: [sections.id],
     }),
     units: many(units), // Each course-section combo has many units
+    sectionProgress: many(sectionProgress),
   })
 );
 
@@ -72,8 +73,7 @@ export const units = pgTable("units", {
   description: text("description").notNull(), // e.g., "Learn the basics"
   courseSectionId: integer("course_section_id")
     .notNull()
-    .references(() => courseSections.id, { onDelete: "cascade" })
-    .notNull(),
+    .references(() => courseSections.id, { onDelete: "cascade" }),
   order: integer("order").notNull(), // Position of unit within the section
 });
 
@@ -169,6 +169,7 @@ export const sectionProgress = pgTable("section_progress", {
   courseSectionId: integer("course_section_id")
     .references(() => courseSections.id, { onDelete: "cascade" })
     .notNull(),
+  active: boolean("active").notNull().default(false),
   completed: boolean("completed").notNull().default(false),
 });
 
@@ -193,12 +194,15 @@ export const userProgress = pgTable("user_progress", {
   points: integer("points").notNull().default(0),
 });
 
-export const userProgressRelations = relations(userProgress, ({ one }) => ({
-  activeCourse: one(courses, {
-    fields: [userProgress.activeCourseId],
-    references: [courses.id],
-  }),
-}));
+export const userProgressRelations = relations(
+  userProgress,
+  ({ one, many }) => ({
+    activeCourse: one(courses, {
+      fields: [userProgress.activeCourseId],
+      references: [courses.id],
+    }),
+  })
+);
 
 export const userSubscription = pgTable("user_subscription", {
   id: serial("id").primaryKey(),

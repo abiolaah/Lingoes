@@ -13,6 +13,7 @@ export const CourseSectionList = () => {
         <ReferenceField source="courseId" reference="courses" />
         <ReferenceField source="sectionId" reference="sections" />
         <TextField source="sectionPhrase" />
+        <TextField source="title" />
         <NumberField source="order" />
       </Datagrid>
     </List>

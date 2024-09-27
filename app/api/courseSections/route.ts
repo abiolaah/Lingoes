@@ -8,7 +8,26 @@ export const GET = async () => {
   if (!getIsAdmin()) {
     return new NextResponse("Unauthorized Request", { status: 403 });
   }
-  const data = await db.query.courseSections.findMany();
+  // Fetch all course sections
+  const courseSections = await db.query.courseSections.findMany();
+
+  // Fetch related course and section titles
+  const courses = await db.query.courses.findMany();
+  const sections = await db.query.sections.findMany();
+
+  // Create a map for quick access to course and section titles
+  const courseMap = new Map(courses.map((course) => [course.id, course.title]));
+  const sectionMap = new Map(
+    sections.map((section) => [section.id, section.title])
+  );
+
+  // Combine the data with concatenated titles
+  const data = courseSections.map((section) => ({
+    ...section,
+    title: `${courseMap.get(section.courseId)} - ${sectionMap.get(
+      section.sectionId
+    )}`, // Create the title
+  }));
 
   return NextResponse.json(data);
 };

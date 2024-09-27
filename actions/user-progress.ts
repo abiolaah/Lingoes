@@ -13,6 +13,7 @@ import {
 } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { POINTS_TO_REFILL } from "@/constants";
+import { subscribe } from "diagnostics_channel";
 
 export const upsertUserProgress = async (courseId: number) => {
   const { userId } = await auth();
@@ -61,6 +62,135 @@ export const upsertUserProgress = async (courseId: number) => {
   revalidatePath("/learn");
   redirect("/learn");
 };
+
+// export const updateUserProgress = async (courseId: number) => {
+//   const { userId } = await auth();
+//   const user = await currentUser();
+
+//   if (!userId || !user) {
+//     throw new Error("Unauthorized");
+//   }
+
+//   const course = await getCourseById(courseId);
+
+//   if (!course) {
+//     throw new Error("Course not found");
+//   }
+
+//   if (
+//     !course.sections.length ||
+//     !course.sections[0].units.length ||
+//     !course.sections[0].units[0].lessons.length
+//   ) {
+//     throw new Error("Course is empty");
+//   }
+
+//   const existingUserProgress = await getUserProgress();
+
+//   if (
+//     existingUserProgress &&
+//     !existingUserProgress.subscribedCourses.includes(courseId)
+//   ) {
+//     await db.update(userProgress).set({
+//       activeCourseId: courseId,
+//       subscribedCourses: [...subscribeCourses, courseId],
+//       userName: user.firstName || "User",
+//       userImageSrc: user.imageUrl || "/mascot.svg",
+//     });
+
+//     revalidatePath("/courses");
+//     revalidatePath("/learn");
+//     redirect("/learn");
+//   }
+
+//   if(existingUserProgress && existingUserProgress.subscribedCourses.includes(courseId)) {
+//     await db.update(userProgress).set({
+//       activeCourseId: courseId,
+//       userName: user.firstName || "User",
+//       userImageSrc: user.imageUrl || "/mascot.svg",
+//     });
+
+//     revalidatePath("/courses");
+//     revalidatePath("/learn");
+//     redirect("/learn");
+//   }
+
+//   await db.insert(userProgress).values({
+//     userId,
+//     activeCourseId: courseId,
+//     subscribedCourses: [...subscribeCourses, courseId],
+//     userName: user.firstName || "User",
+//     userImageSrc: user.imageUrl || "/mascot.svg",
+//   });
+
+//   revalidatePath("/courses");
+//   revalidatePath("/learn");
+//   redirect("/learn");
+// };
+
+/* export const subscribeCourse = async (courseId: number) => {
+  const { userId } = await auth();
+  const user = await currentUser();
+
+  if (!userId || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const course = await getCourseById(courseId);
+
+  if (!course) {
+    throw new Error("Course not found");
+  }
+
+  if (
+    !course.sections.length ||
+    !course.sections[0].units.length ||
+    !course.sections[0].units[0].lessons.length
+  ) {
+    throw new Error("Course is empty");
+  }
+  const userProgress = await getUserProgress();
+
+  let subscribedCourses = userProgress.subscribedCourses;
+
+  if (subscribedCourses.includes(courseId)) {
+    throw new Error("Already subscribed to the course");
+  }
+
+  subscribedCourses.push(courseId);
+
+  return subscribedCourses;
+}; */
+/* export const unSubscribeCourse = async (courseId: number) => {
+  const { userId } = await auth();
+  const user = await currentUser();
+
+  if (!userId || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const course = await getCourseById(courseId);
+
+  if (!course) {
+    throw new Error("Course not found");
+  }
+
+  const userProgress = await getUserProgress();
+
+  let subscribedCourses = userProgress.subscribedCourses;
+
+  if (!subscribedCourses.includes(courseId)) {
+    throw new Error("Not subscribed to the course");
+  }
+
+  let index = subscribedCourses.indexOf(courseId);
+
+  if (index !== -1) {
+    subscribedCourses.splice(index, 1);
+  }
+
+  return subscribedCourses;
+}; */
 
 export const reduceHearts = async (challengeId: number) => {
   const { userId } = await auth();
