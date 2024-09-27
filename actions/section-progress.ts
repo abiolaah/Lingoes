@@ -81,16 +81,20 @@ export const updateSectionProgressActiveStatus = async (sectionId: number) => {
     ),
   });
 
-  if (existingSectionProgress && existingSectionProgress.completed) {
+  /*  if (existingSectionProgress && existingSectionProgress.completed) {
+    return; // Section already completed, no need to update
+  } */
+
+  if (
+    existingSectionProgress &&
+    existingSectionProgress.completed &&
+    !existingSectionProgress.active
+  ) {
     return; // Section already completed, no need to update
   }
 
-  /* if (existingSectionProgress && existingSectionProgress.completed && existingSectionProgress.active) {
-      return; // Section already completed, no need to update
-    } */
-
   // Update or insert the section progress to mark it as completed
-  /* if (existingSectionProgress) {
+  if (existingSectionProgress) {
     await db
       .update(sectionProgress)
       .set({
@@ -102,12 +106,12 @@ export const updateSectionProgressActiveStatus = async (sectionId: number) => {
       userId,
       courseSectionId: sectionId,
       active: true,
-      completed,
+      completed: false,
     });
-  } */
+  }
 
   // Revalidate paths to refresh the progress in the UI
   revalidatePath("/learn");
-  revalidatePath(`/section/${sectionId}`);
+  // revalidatePath(`/section/${sectionId}`);
   revalidatePath("/leaderboard");
 };

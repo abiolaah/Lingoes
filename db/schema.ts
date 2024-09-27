@@ -47,7 +47,7 @@ export const coursesRelations = relations(courses, ({ many }) => ({
 //Relations for sections
 export const sectionsRelations = relations(sections, ({ many }) => ({
   course: many(courseSections),
-  // units: many(units), // Units linked through courseSections
+  units: many(units), // Units linked through courseSections
 }));
 
 //Relations for courseSections
