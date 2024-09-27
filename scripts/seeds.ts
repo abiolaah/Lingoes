@@ -14,9 +14,6 @@ const reset = async () => {
 
   await db.delete(schema.courses);
   await db.delete(schema.userProgress);
-  await db.delete(schema.sections);
-  await db.delete(schema.courseSections);
-  await db.delete(schema.sectionProgress);
   await db.delete(schema.units);
   await db.delete(schema.lessons);
   await db.delete(schema.challenges);
@@ -58,7 +55,6 @@ const sectionsPopulation = async () => {
       order: 1,
     },
     {
-      id: 2,
       title: "Section 2",
       level: "Beginner A1",
       description:
@@ -66,7 +62,6 @@ const sectionsPopulation = async () => {
       order: 2,
     },
     {
-      id: 3,
       title: "Section 3",
       level: "Elementary A2",
       description:
@@ -74,35 +69,30 @@ const sectionsPopulation = async () => {
       order: 3,
     },
     {
-      id: 4,
       title: "Section 4",
       level: "Elementary A2",
       description: "Use sentences in conversations about everyday topics",
       order: 4,
     },
     {
-      id: 5,
       title: "Section 5",
       level: "Intermediate B1",
       description: "Form sentences about a wider variety of topics",
       order: 5,
     },
     {
-      id: 6,
       title: "Section 6",
       level: "Intermediate B1",
       description: "Communicate more complex ideas in conversations",
       order: 6,
     },
     {
-      id: 7,
       title: "Section 7",
       level: "Upper Intermediate B2",
       description: "Talk about abstract feelings and opinions",
       order: 7,
     },
     {
-      id: 8,
       title: "Section 8",
       level: "Upper Intermediate B2",
       description: "Converse confidently, even about some specialized topics.",
@@ -120,56 +110,48 @@ const courseSectionsPopulation = async () => {
       id: 1, //COURSE 1, SECTION 1
       courseId: 1,
       sectionId: 1,
-      sectionPhrase: `Bonjour!`,
       order: 1,
     },
     {
       id: 2, //COURSE 1, SECTION 2
       courseId: 1,
       sectionId: 2,
-      sectionPhrase: `Je commence en français.`,
       order: 2,
     },
     {
       id: 3, //COURSE 1, SECTION 3
       courseId: 1,
       sectionId: 3,
-      sectionPhrase: `Je connais quelques mots.`,
       order: 3,
     },
     {
       id: 4, //COURSE 1, SECTION 4
       courseId: 1,
       sectionId: 4,
-      sectionPhrase: `Je peux parler un peu avec des gens.`,
       order: 4,
     },
     {
       id: 5, //COURSE 1, SECTION 5
       courseId: 1,
       sectionId: 5,
-      sectionPhrase: `Je peux participer à la vie quotidienne en français`,
       order: 5,
     },
     {
       id: 6, //COURSE 1, SECTION 6
       courseId: 1,
       sectionId: 6,
-      sectionPhrase: `Je peux m'exprimer différemment selon le contexte.`,
       order: 6,
     },
     {
       id: 7, //COURSE 1, SECTION 7
       courseId: 1,
-      sectionId: 7,
-      sectionPhrase: `J'arrive à m'exprimer sur des sujets abstraits, comme mes espoirs, buts et projets.`,
+      sectionId: 1,
       order: 7,
     },
     {
       id: 8, //COURSE 1, SECTION 8
       courseId: 1,
-      sectionId: 8,
-      sectionPhrase: `Je me sens à l'aise en français et je peux m'exprimer spontanément sur des sujets divers.`,
+      sectionId: 2,
       order: 8,
     },
   ]);
@@ -180,56 +162,48 @@ const courseSectionsPopulation = async () => {
       id: 9, //COURSE 2, SECTION 1
       courseId: 2,
       sectionId: 1,
-      sectionPhrase: `¡Hola!`,
       order: 9,
     },
     {
       id: 10, //COURSE 2, SECTION 2
       courseId: 2,
       sectionId: 2,
-      sectionPhrase: `Quiero aprender español.`,
       order: 10,
     },
     {
       id: 11, //COURSE 2, SECTION 3
       courseId: 2,
       sectionId: 3,
-      sectionPhrase: `Sé algunas palabras.`,
       order: 11,
     },
     {
       id: 12, //COURSE 2, SECTION 4
       courseId: 2,
       sectionId: 4,
-      sectionPhrase: `Puedo hablar un poco de español con mis amigos.`,
       order: 12,
     },
     {
       id: 13, //COURSE 2, SECTION 5
       courseId: 2,
       sectionId: 5,
-      sectionPhrase: `Soy capaz de usar español en mi vida cotidiana.`,
       order: 13,
     },
     {
       id: 14, //COURSE 2, SECTION 6
       courseId: 2,
       sectionId: 6,
-      sectionPhrase: `Puedo usar expresiones diferentes de acuerdo al contexto social.`,
       order: 14,
     },
     {
       id: 15, //COURSE 2, SECTION 7
       courseId: 2,
       sectionId: 7,
-      sectionPhrase: `Puedo discutir temas abstractos como mis sueños, metas y proyectos de vida.`,
       order: 15,
     },
     {
       id: 16, //COURSE 2, SECTION 8
       courseId: 2,
       sectionId: 8,
-      sectionPhrase: `Me resulta fácil conversar en español sobre diferentes temas incluso en situaciones imprevistas`,
       order: 16,
     },
   ]);
@@ -286,53 +260,53 @@ const unitsPopulation = async () => {
   // Populating units for Spanish Section 1
   await db.insert(schema.units).values([
     {
-      id: 7,
+      id: 1,
       title: "Unit 1",
       description: "Learn the basics",
       courseSectionId: 9, //Spanish, Section 1
-      order: 7,
+      order: 1,
     },
     {
-      id: 8,
+      id: 2,
       title: "Unit 2",
       description: "Learn greetings",
       courseSectionId: 9, //Spanish, Section 1
-      order: 8,
+      order: 2,
     },
     {
-      id: 9,
+      id: 3,
       title: "Unit 3",
       description: "Learn to introduce yourself",
       courseSectionId: 9, //Spanish, Section 1
-      order: 9,
+      order: 3,
     },
     {
-      id: 10,
+      id: 4,
       title: "Unit 4",
       description: "Learn the present tense",
       courseSectionId: 9, //Spanish, Section 1
-      order: 10,
+      order: 4,
     },
     {
-      id: 11,
+      id: 5,
       title: "Unit 5",
       description: "Learn to get around town",
       courseSectionId: 9, //Spanish, Section 1
-      order: 11,
+      order: 5,
     },
     {
-      id: 12,
+      id: 6,
       title: "Unit 6",
       description: "Learn to refer to family members",
       courseSectionId: 9, //Spanish, Section 1
-      order: 12,
+      order: 6,
     },
   ]);
   console.log("Populating Units Finished");
 };
 const lessonsPopulation = async () => {
   console.log("Populating Lessons.....");
-  // Add lessons for Course 1 Section 1 French Section 1 Unit 1
+  // Add lesson
   await db.insert(schema.lessons).values([
     {
       id: 1,
@@ -359,8 +333,6 @@ const lessonsPopulation = async () => {
       order: 4,
     },
   ]);
-
-  // Add lessons for Course 1 Section 1 French Section 1 Unit 2
   await db.insert(schema.lessons).values([
     {
       id: 5,
@@ -391,68 +363,6 @@ const lessonsPopulation = async () => {
       title: "Review",
       unitId: 2,
       order: 9,
-    },
-  ]);
-
-  // Add lessons for Course 2 Section 1 Spanish Section 1 Unit 1
-  await db.insert(schema.lessons).values([
-    {
-      id: 10,
-      title: "Identifying people and object",
-      unitId: 7,
-      order: 10,
-    },
-    {
-      id: 11,
-      title: "Understanding gender nouns",
-      unitId: 7,
-      order: 11,
-    },
-    {
-      id: 12,
-      title: "Using verbs",
-      unitId: 7,
-      order: 12,
-    },
-    {
-      id: 13,
-      title: "Review",
-      unitId: 7,
-      order: 13,
-    },
-  ]);
-
-  // Add lessons for Course 2 Section 1 Spanish Section 1 Unit 2
-  await db.insert(schema.lessons).values([
-    {
-      id: 14,
-      title: "Salutations",
-      unitId: 8,
-      order: 14,
-    },
-    {
-      id: 15,
-      title: "Basic Greetings",
-      unitId: 8,
-      order: 15,
-    },
-    {
-      id: 16,
-      title: "Meeting next time",
-      unitId: 8,
-      order: 16,
-    },
-    {
-      id: 17,
-      title: "First time meeting",
-      unitId: 8,
-      order: 17,
-    },
-    {
-      id: 18,
-      title: "Review",
-      unitId: 8,
-      order: 18,
     },
   ]);
   console.log("Populating Lessons Finished");
@@ -608,6 +518,20 @@ const challengesPopulation = async () => {
       type: "ASSIST",
       order: 20,
       question: 'Which one of these is "an apple"?',
+    },
+    {
+      id: 21,
+      lessonId: 2, // Understanding gender nouns
+      type: "SELECT",
+      order: 21,
+      question: 'Which one of these is "an apple"?',
+    },
+    {
+      id: 22,
+      lessonId: 2, // Understanding gender nouns
+      type: "ASSIST",
+      order: 22,
+      question: '"a dog"?',
     },
   ]);
 

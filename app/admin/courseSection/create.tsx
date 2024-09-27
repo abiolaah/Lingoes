@@ -6,20 +6,16 @@ import {
   SimpleForm,
   TextInput,
 } from "react-admin";
-export const UnitCreate = () => {
+export const CourseSectionCreate = () => {
   return (
     <Create>
       <SimpleForm>
-        <TextInput source="title" validate={[required()]} label="Title" />
+        <ReferenceInput source="courseId" reference="courses" />
+        <ReferenceInput source="sectionId" reference="sections" />
         <TextInput
-          source="description"
+          source="sectionPhrase"
           validate={[required()]}
           label="Description"
-        />
-        <ReferenceInput
-          source="courseSectionId"
-          reference="course_sections"
-          label="Section"
         />
         <NumberInput source="order" validate={[required()]} label="Order" />
       </SimpleForm>

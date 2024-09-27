@@ -1,28 +1,25 @@
 import {
-  Create,
+  Edit,
   NumberInput,
   ReferenceInput,
   required,
   SimpleForm,
   TextInput,
 } from "react-admin";
-export const UnitCreate = () => {
+export const CourseSectionEdit = () => {
   return (
-    <Create>
+    <Edit>
       <SimpleForm>
-        <TextInput source="title" validate={[required()]} label="Title" />
+        <NumberInput source="id" validate={[required()]} label="Id" />
+        <ReferenceInput source="courseId" reference="courses" />
+        <ReferenceInput source="sectionId" reference="sections" />
         <TextInput
-          source="description"
+          source="sectionPhrase"
           validate={[required()]}
           label="Description"
         />
-        <ReferenceInput
-          source="courseSectionId"
-          reference="course_sections"
-          label="Section"
-        />
         <NumberInput source="order" validate={[required()]} label="Order" />
       </SimpleForm>
-    </Create>
+    </Edit>
   );
 };

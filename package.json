@@ -16,6 +16,7 @@
   "dependencies": {
     "@clerk/nextjs": "^5.3.1",
     "@neondatabase/serverless": "^0.9.4",
+    "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -47,6 +48,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@xpd/tailwind-3dtransforms": "^1.0.3",
     "drizzle-kit": "^0.24.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",

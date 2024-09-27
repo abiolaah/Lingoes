@@ -62,7 +62,7 @@ const PracticePage = async () => {
           </div>
           <Separator className=" mt-4 mb-6 h-0.5 rounded-full dark:border-slate-400 border-neutral-800" />
           <div className="flex flex-col items-start w-full">
-            <div className="flex flex-col mb-6">
+            <div className="lg:hidden flex flex-col mb-6">
               <p className="text-left font-bold text-neutral-800 text-2xl my-2">
                 Conversation
               </p>

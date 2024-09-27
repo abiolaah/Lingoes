@@ -1,0 +1,44 @@
+await db.insert(schema.units).values([
+    {
+      id: 1,
+      title: "Unit 1",
+      description: "Learn the basics",
+      courseSectionId: 1, //French, Section 1
+      order: 1,
+    },
+    {
+      id: 2,
+      title: "Unit 2",
+      description: "Learn greetings",
+      courseSectionId: 1, //French
+      order: 2,
+    },
+    {
+      id: 3,
+      title: "Unit 3",
+      description: "Learn to introduce yourself",
+      courseSectionId: 1, //French
+      order: 3,
+    },
+    {
+      id: 4,
+      title: "Unit 4",
+      description: "Learn the present tense",
+      courseSectionId: 1, //French
+      order: 4,
+    },
+    {
+      id: 5,
+      title: "Unit 5",
+      description: "Learn to get around town",
+      courseSectionId: 1, //French
+      order: 5,
+    },
+    {
+      id: 6,
+      title: "Unit 6",
+      description: "Learn to refer to family members",
+      courseSectionId: 1, //French
+      order: 6,
+    },
+  ]);

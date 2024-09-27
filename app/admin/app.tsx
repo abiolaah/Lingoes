@@ -7,6 +7,14 @@ import { CourseList } from "./course/list";
 import { CourseCreate } from "./course/create";
 import { CourseEdit } from "./course/edit";
 
+import { SectionList } from "./section/list";
+import { SectionCreate } from "./section/create";
+import { SectionEdit } from "./section/edit";
+
+import { CourseSectionList } from "./courseSection/list";
+import { CourseSectionCreate } from "./courseSection/create";
+import { CourseSectionEdit } from "./courseSection/edit";
+
 import { UnitList } from "./unit/list";
 import { UnitCreate } from "./unit/create";
 import { UnitEdit } from "./unit/edit";
@@ -34,6 +42,23 @@ const App = () => {
         create={CourseCreate}
         edit={CourseEdit}
         recordRepresentation="title"
+      />
+
+      <Resource
+        name="sections"
+        list={SectionList}
+        create={SectionCreate}
+        edit={SectionEdit}
+        recordRepresentation="title"
+      />
+
+      <Resource
+        name="courseSections"
+        list={CourseSectionList}
+        create={CourseSectionCreate}
+        edit={CourseSectionEdit}
+        recordRepresentation="title"
+        options={{ label: "Course Sections" }}
       />
 
       <Resource

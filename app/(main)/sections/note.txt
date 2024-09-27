@@ -1,0 +1,110 @@
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
+import { boolean } from "drizzle-orm/mysql-core";
+import { Check, Dot, Lock, Trophy } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Bubble } from "./bubble";
+import { Button } from "@/components/ui/button";
+
+type Props = {
+  id: number;
+  title: string | undefined;
+  level: string;
+  totalUnit: number;
+  phrase: string;
+  percentage: number;
+  disabled?: boolean;
+  completed?: boolean;
+  active?: boolean;
+};
+
+export const Card = ({
+  id,
+  title,
+  level,
+  totalUnit,
+  phrase,
+  percentage,
+  disabled,
+  completed,
+  active,
+}: Props) => {
+  return (
+    <div
+      className={cn(
+        "h-full border-2 bg-sky-100 rounded-xl border-b-4 hover:bg-black/5 hover:dark:bg-white/5 cursor-pointer active:border-b-2 flex flex-col justify-between p-2 pb-6 min-h-[217px] min-w-[100px] max-md:w-[250px] max-md:h-[200px] md:pr-3 md:w-[550px] md:h-[200px] md:flex md:flex-col md:gap-2",
+        !active && "pointer-events-none bg-gray-200 text-slate-500",
+        completed && "pointer-events-none opacity-50 bg-white text-slate-800"
+      )}
+    >
+      <div className="flex items-center gap-1 justify-between">
+        <div className="pt-2 mt-0 top-0">
+          <span className="flex gap-2">
+            <p className="text-sky-400 font-bold">{level}</p>
+            <Link
+              href={`/details/${id}`}
+              className="flex text-sky-400 font-bold"
+            >
+              <Dot />
+              SEE DETAILS
+            </Link>
+          </span>
+        </div>
+        <div className="">
+          {!completed ? (
+            <Bubble text={phrase} />
+          ) : (
+            <Button>
+              <Link href="/learn" className="text-sky-400">
+                Review
+              </Link>
+            </Button>
+          )}
+        </div>
+      </div>
+      <div className="min-h-[24px] w-full flex flex-col gap-2 ml-4 pb-4">
+        <h2 className="text-neutral-600 font-bold text-2xl">{title}</h2>
+        {active ? (
+          <div className="flex items-start justify-between p-1.5">
+            {completed ? (
+              <div className="flex gap-1 l">
+                <div className="rounded-full dark:bg-white bg-green-500 flex items-center justify-center p-1.5">
+                  <Check className="dark:text-green-500 text-white stroke-[4] h-4 w-4" />
+                </div>
+                <h5 className="text-green-500 uppercase font-bold text-lg">
+                  Completed
+                </h5>
+              </div>
+            ) : (
+              <div className="flex gap-0">
+                <Progress value={percentage} className="w-[475px] h-4" />
+                <Trophy className="text-green-500" width={30} height={30} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Lock className="text-neutral-400 border-none" />
+            {totalUnit} units
+          </div>
+        )}
+      </div>
+      {!completed && (
+        <div className="flex items-start ml-4">
+          {active ? (
+            <Button variant="primary">
+              <Link href="/learn">Continue</Link>
+            </Button>
+          ) : (
+            <Button>
+              <Link href="/learn" className="text-sky-400">
+                Jump To {title}
+              </Link>
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
