@@ -1,3 +1,4 @@
+"use server";
 import { cache } from "react";
 import db from "@/db/drizzle";
 import { auth } from "@clerk/nextjs/server";
@@ -284,7 +285,7 @@ export const getUnits = cache(async () => {
     },
   });
 
-  console.log("DATA", data);
+  // console.log("DATA", data);
 
   const normalizedData = data.flatMap((section) =>
     section.units.map((unit) => {
@@ -306,7 +307,7 @@ export const getUnits = cache(async () => {
       return { ...unit, lessons: lessonsWithCompletedStatus };
     })
   );
-  console.log("NORMALIZED DATA", normalizedData);
+  // console.log("NORMALIZED DATA", normalizedData);
   return normalizedData;
 });
 
@@ -347,7 +348,7 @@ export const getUnitsBySectionId = cache(async (sectionId: number) => {
     },
   });
 
-  console.log("DATA", data);
+  // console.log("DATA", data);
 
   if (!data) return null;
 
@@ -374,7 +375,7 @@ export const getUnitsBySectionId = cache(async (sectionId: number) => {
       lessons: lessonsWithCompletedStatus,
     };
   });
-  console.log("NORMALIZED DATA", normalizedData);
+  // console.log("NORMALIZED DATA", normalizedData);
   return normalizedData;
 });
 
