@@ -6,6 +6,7 @@ import {
   getUserSubscription,
   getTopTenUsers,
   getCourseSectionInfo,
+  getUserProgressWithSubscribedCourse,
 } from "@/db/queries";
 
 import { List } from "./list";
@@ -17,10 +18,11 @@ import { Quests } from "@/components/quests";
 import { redirect } from "next/navigation";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { Header } from "./header";
+import { StickyContent } from "@/components/sticky-content";
 
 const SectionPage = async () => {
   const courseSectionInfoPromise = getCourseSectionInfo();
-  const userProgressPromise = getUserProgress();
+  const userProgressPromise = getUserProgressWithSubscribedCourse();
   const userSubscriptionPromise = getUserSubscription();
   const leaderboardPromise = getTopTenUsers();
 
@@ -64,19 +66,13 @@ const SectionPage = async () => {
   return (
     <div className="flex flex-row-reverse items-center justify-center gap-[48px] px-6">
       <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          hearts={userProgress.hearts}
-          points={userProgress.points}
-          hasActiveSubscription={!!userSubscription?.isActive}
-        />
+        <StickyContent />
         {!isPro ? <Promo /> : <Leaderboard data={leaderboardData} />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
         <Header href="/learn" text="Back" />
         <List details={sectionsInfoData} />
-        {/* <List details={sectionDetails} /> */}
       </FeedWrapper>
     </div>
   );

@@ -1,6 +1,7 @@
 // app/learn/page.tsx
+"use server";
 import { cookies } from "next/headers"; // Use cookies to read activeSectionId
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { StickyWrapper } from "@/components/sticky-wrapper";
 import { UserProgress } from "@/components/user-progress";
@@ -13,7 +14,7 @@ import {
   getTopTenUsers,
   getUnits,
   getUnitsBySectionId,
-  getUserProgress,
+  getUserProgressWithSubscribedCourse,
   getUserSubscription,
 } from "@/db/queries";
 import { Unit } from "./unit";
@@ -21,12 +22,15 @@ import { lessons, units as unitsSchema } from "@/db/schema";
 import { Leaderboard } from "@/components/leaderboard";
 import Link from "next/link";
 import { toast } from "sonner";
+import { unSubscribeCourse, upsertUserProgress } from "@/actions/user-progress";
+import { useTransition } from "react";
+import { StickyContent } from "@/components/sticky-content";
 
 const LearnPage = async () => {
   const cookieStore = cookies(); // Get the cookie store
   const sectionId = cookieStore.get("activeSectionId")?.value; // Retrieve the sectionId from cookies
 
-  const userProgressPromise = getUserProgress();
+  const userProgressPromise = getUserProgressWithSubscribedCourse();
   const courseProgressPromise = getCourseProgress();
   const lessonPercentagePromise = getLessonPercentage();
   const userSubscriptionPromise = getUserSubscription();
@@ -69,23 +73,26 @@ const LearnPage = async () => {
 
   const units = sectionUnits;
 
+  console.log("SECTIONS UNITS", units);
+
   if (!units) {
     toast.info("Section does not have any units and lessons yet");
     redirect("/sections");
   }
 
+  const sectionLessons = units.map((unit) => {
+    return unit.lessons.map((lesson) => ({
+      ...lesson,
+    }));
+  });
+  console.log("SECTIONS UNITS' LESSONS", sectionLessons);
+
   const isPro = !!userSubscription?.isActive;
-  const sectionTitle = "Section Title"; // Fetch section title if needed
 
   return (
     <div className="flex flex-row-reverse items-center justify-center gap-[48px] px-6">
       <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          hearts={userProgress.hearts}
-          points={userProgress.points}
-          hasActiveSubscription={!!userSubscription?.isActive}
-        />
+        <StickyContent />
         {!isPro ? <Promo /> : <Leaderboard data={leaderboardData} />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
