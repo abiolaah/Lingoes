@@ -52,6 +52,45 @@ export const getUserProgress = cache(async () => {
   };
 });
 
+//Get user progress
+export const getUserProgressWithSubscribedCourse = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const data = await db.query.userProgress.findFirst({
+    where: eq(userProgress.userId, userId),
+    with: {
+      activeCourse: true,
+      subscribedCourses: {
+        with: {
+          course: true,
+        },
+      },
+    },
+  });
+
+  // If there's no data, return null
+  if (!data) {
+    return null;
+  }
+
+  // Extract courseId from subscribedCourses and return only the course IDs
+  const subscribedCoursesDetails =
+    data.subscribedCourses.map((subscribed) => ({
+      courseId: subscribed.courseId,
+      title: subscribed.course.title,
+      imageSrc: subscribed.course.imageSrc,
+    })) || [];
+
+  return {
+    ...data,
+    subscribedCourses: subscribedCoursesDetails,
+  };
+});
+
 //Get all courses
 export const getCourses = cache(async () => {
   const data = await db.query.courses.findMany();
@@ -398,8 +437,6 @@ export const getUnitsBySectionId = cache(async (sectionId: number) => {
     },
   });
 
-  // console.log("DATA", data);
-
   if (!data) return null;
 
   const normalizedData = data.units.map((unit) => {
@@ -408,7 +445,7 @@ export const getUnitsBySectionId = cache(async (sectionId: number) => {
       const allCompletedChallenges = lesson.challenges.every((challenge) => {
         return (
           challenge.challengeProgress &&
-          challenge.challengeProgress.every((progress) => progress.completed)
+          challenge.challengeProgress.some((progress) => progress.completed)
         );
       });
 
@@ -425,7 +462,6 @@ export const getUnitsBySectionId = cache(async (sectionId: number) => {
       lessons: lessonsWithCompletedStatus,
     };
   });
-  // console.log("NORMALIZED DATA", normalizedData);
   return normalizedData;
 });
 
