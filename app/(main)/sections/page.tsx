@@ -1,4 +1,3 @@
-import { sectionDetails } from "@/lib/data/sectiondata";
 import {
   getCourseSections,
   getUserProgress,
