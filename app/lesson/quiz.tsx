@@ -199,7 +199,7 @@ export const Quiz = ({
 
   if (!challenge) {
     return (
-      <>
+      <div>
         {finishAudio}
         <Confetti
           width={width}
@@ -238,7 +238,7 @@ export const Quiz = ({
           status="completed"
           onCheck={() => router.push("/learn")}
         />
-      </>
+      </div>
     );
   }
 
@@ -247,7 +247,7 @@ export const Quiz = ({
       ? "Select the correct meaning"
       : challenge.question; //TODO: Add more types
   return (
-    <>
+    <div>
       {incorrectAudio}
       {correctAudio}
       <Header
@@ -282,6 +282,6 @@ export const Quiz = ({
         status={status}
         onCheck={onContinue}
       />
-    </>
+    </div>
   );
 };

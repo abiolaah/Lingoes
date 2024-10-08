@@ -42,12 +42,13 @@ export const courseSections = pgTable("course_sections", {
 export const coursesRelations = relations(courses, ({ many }) => ({
   userProgress: many(userProgress),
   sections: many(courseSections), //Many-to-Many relationship
+  subscribedUsers: many(userSubscribedCourses),
 }));
 
 //Relations for sections
 export const sectionsRelations = relations(sections, ({ many }) => ({
   course: many(courseSections),
-  units: many(units), // Units linked through courseSections
+  // units: many(units), // Units linked through courseSections
 }));
 
 //Relations for courseSections
@@ -199,6 +200,31 @@ export const userProgressRelations = relations(
   ({ one, many }) => ({
     activeCourse: one(courses, {
       fields: [userProgress.activeCourseId],
+      references: [courses.id],
+    }),
+    subscribedCourses: many(userSubscribedCourses),
+  })
+);
+
+export const userSubscribedCourses = pgTable("user_subscribed_courses", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userProgress.userId, { onDelete: "cascade" }),
+  courseId: integer("course_id")
+    .notNull()
+    .references(() => courses.id, { onDelete: "cascade" }),
+});
+
+export const userSubscribedCoursesRelations = relations(
+  userSubscribedCourses,
+  ({ one }) => ({
+    user: one(userProgress, {
+      fields: [userSubscribedCourses.userId],
+      references: [userProgress.userId],
+    }),
+    course: one(courses, {
+      fields: [userSubscribedCourses.courseId],
       references: [courses.id],
     }),
   })

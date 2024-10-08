@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { boolean } from "drizzle-orm/mysql-core";
-import { Check } from "lucide-react";
+import { BadgeCheck, Check } from "lucide-react";
 import Image from "next/image";
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
   onClick: (id: number) => void;
   disabled?: boolean;
   active?: boolean;
+  subscribed?: boolean;
 };
 
 export const Card = ({
@@ -19,6 +20,7 @@ export const Card = ({
   onClick,
   disabled,
   active,
+  subscribed,
 }: Props) => {
   return (
     <div
@@ -28,12 +30,21 @@ export const Card = ({
       )}
       onClick={() => onClick(id)}
     >
-      <div className="min-[24px] w-full flex items-center justify-end">
-        {active && (
-          <div className="rounded-md dark:bg-white bg-green-500 flex items-center justify-center p-1.5">
-            <Check className="dark:text-green-500 text-white stroke-[4] h-4 w-4" />
-          </div>
-        )}
+      <div className="relative w-full flex flex-row-reverse justify-between">
+        <div className="min-[24px] w-full flex justify-end">
+          {active && (
+            <div className="rounded-md dark:bg-white bg-green-500 flex justify-center p-1.5">
+              <Check className="dark:text-green-500 text-white stroke-[4] h-4 w-4" />
+            </div>
+          )}
+        </div>
+        <div className="min-[24px] w-full flex justify-start">
+          {subscribed && (
+            <div className="rounded-md dark:bg-white bg-blue-600 flex justify-center p-1.5">
+              <BadgeCheck className="dark:text-green-500 text-white stroke-[4] h-4 w-4" />
+            </div>
+          )}
+        </div>
       </div>
 
       <Image

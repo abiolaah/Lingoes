@@ -2,12 +2,12 @@
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Check, Dot, Lock, Trophy } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Bubble } from "./bubble";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/compat/router";
+// import { useSection } from "@/context/SectionContext";
+import React from "react";
 
 type Props = {
   sectionId: number;
@@ -35,28 +35,27 @@ export const Card = ({
   active,
 }: Props) => {
   const router = useRouter();
+  // const { setSectionId } = useSection();
+  const handleNavigation = async () => {
+    try {
+      // Create a POST request to set the sectionId in the session or cookie
+      const response = await fetch("/api/set-active-section", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sectionId }),
+      });
 
-  // function to handle routing to learn page with appropriate section' units
-  // const handleNavigation = () => {
-  //   console.log("ROUTER VALUE", router);
-  //   router?.push({
-  //     pathname: "/learn",
-  //     query: { sectionId: id },
-  //   });
-  //   console.log("SECTION ID", id);
-  // };
-  // const handleNavigation = () => {
-  //   if (sectionId !== undefined) {
-  //     console.log("Navigating to section:", sectionId); // Ensure `id` is not undefined
-  //     router.push(`/learn?sectionId=${sectionId}`); // Navigate to the learn page with sectionId in query
-  //     //TODO: Figure out how to hidden the section id part of the url
-  //   } else {
-  //     console.error("Section ID is undefined");
-  //   }
-  // };
-  const handleNavigation = () => {
-    console.log("Navigating to learn!");
-    router.push("/learn"); // Navigate to the learn page with sectionId in query
+      if (response.ok) {
+        // After setting the sectionId, navigate to /learn
+        window.location.href = "/learn";
+      } else {
+        console.error("Failed to set section ID");
+      }
+    } catch (error) {
+      console.error("Error setting section ID:", error);
+    }
   };
   return (
     <div

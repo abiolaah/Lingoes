@@ -14,6 +14,7 @@ import { Promo } from "@/components/promo";
 import { Items } from "./items";
 import { Quests } from "@/components/quests";
 import { Leaderboard } from "@/components/leaderboard";
+import { StickyContent } from "@/components/sticky-content";
 
 const ShopPage = async () => {
   const userProgressPromise = getUserProgress();
@@ -35,12 +36,7 @@ const ShopPage = async () => {
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          hearts={userProgress.hearts}
-          points={userProgress.points}
-          hasActiveSubscription={isPro}
-        />
+        <StickyContent />
         {!isPro ? <Promo /> : <Leaderboard data={leaderboardData} />}
         <Quests points={userProgress.points} />
       </StickyWrapper>

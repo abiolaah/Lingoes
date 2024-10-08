@@ -15,6 +15,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Promo } from "@/components/promo";
 import { Quests } from "@/components/quests";
 import { Leaderboard } from "@/components/leaderboard";
+import { StickyContent } from "@/components/sticky-content";
 
 const LeaderboardPage = async () => {
   const userProgressPromise = getUserProgress();
@@ -36,12 +37,7 @@ const LeaderboardPage = async () => {
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          hearts={userProgress.hearts}
-          points={userProgress.points}
-          hasActiveSubscription={isPro}
-        />
+        <StickyContent />
         {!isPro && <Promo />}
         <Quests points={userProgress.points} />
       </StickyWrapper>

@@ -23,6 +23,7 @@ const reset = async () => {
   await db.delete(schema.challengeOptions);
   await db.delete(schema.challengeProgress);
   await db.delete(schema.userSubscription);
+  await db.delete(schema.userSubscribedCourses);
   console.log("Resetting Finished.....");
 };
 

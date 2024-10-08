@@ -1,3 +1,5 @@
+"use client";
+
 import { Card } from "./card";
 // import { upsertSectionProgress } from "@/actions/sections-progress";
 
