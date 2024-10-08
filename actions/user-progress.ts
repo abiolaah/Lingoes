@@ -28,6 +28,7 @@ export const upsertUserProgress = async (courseId: number) => {
     throw new Error("Unauthorized");
   }
 
+  console.log("USER PROGRESS COURSE INFO", courseId);
   const course = await getCourseById(courseId);
 
   if (!course) {
@@ -170,4 +171,81 @@ export const refillHearts = async () => {
   revalidatePath("/learn");
   revalidatePath("/quests");
   revalidatePath("/leaderboard");
+};
+
+export const unSubscribeCourse = async (courseId: number) => {
+  const { userId } = await auth();
+  const user = await currentUser();
+
+  if (!userId || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  // Check if the user is subscribed to the course
+  const subscribedCourse = await db.query.userSubscribedCourses.findFirst({
+    where: and(
+      eq(userSubscribedCourses.userId, userId),
+      eq(userSubscribedCourses.courseId, courseId)
+    ),
+  });
+
+  // If the user is not subscribed, throw an error
+  if (!subscribedCourse) {
+    throw new Error("User is not subscribed to this course");
+  }
+
+  // Remove the subscription from the database
+  await db
+    .delete(userSubscribedCourses)
+    .where(
+      and(
+        eq(userSubscribedCourses.userId, userId),
+        eq(userSubscribedCourses.courseId, courseId)
+      )
+    );
+
+  // Handle user progress and activeCourse
+  const currentUserProgress = await getUserProgress();
+
+  if (currentUserProgress?.activeCourseId === courseId) {
+    // Get the remaining subscribed courses for the user
+    const remainingSubscribedCourses =
+      await db.query.userSubscribedCourses.findMany({
+        where: eq(userSubscribedCourses.userId, userId),
+        with: {
+          course: true, // To include course details like courseId
+        },
+      });
+
+    // If there are remaining courses, randomly set one as the active course
+    if (remainingSubscribedCourses.length > 0) {
+      const randomCourse =
+        remainingSubscribedCourses[
+          Math.floor(Math.random() * remainingSubscribedCourses.length)
+        ];
+
+      await db
+        .update(userProgress)
+        .set({
+          activeCourseId: randomCourse.courseId, // Set the random course as the active course
+        })
+        .where(eq(userProgress.userId, userId));
+    } else {
+      // If no remaining courses, set activeCourseId to null
+      await db
+        .update(userProgress)
+        .set({
+          activeCourseId: null,
+        })
+        .where(eq(userProgress.userId, userId));
+    }
+  }
+
+  // Revalidate paths to update the UI
+  revalidatePath("/courses");
+  revalidatePath("/learn");
+  revalidatePath("/shop");
+
+  // Optionally redirect or return a success message
+  redirect("/courses");
 };
