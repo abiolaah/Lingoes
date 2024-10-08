@@ -14,6 +14,7 @@ import {
   userProgress,
   userSubscription,
   sectionProgress,
+  userSubscribedCourses,
 } from "@/db/schema";
 
 //Get user progress
@@ -28,10 +29,27 @@ export const getUserProgress = cache(async () => {
     where: eq(userProgress.userId, userId),
     with: {
       activeCourse: true,
+      subscribedCourses: {
+        with: {
+          course: true,
+        },
+      },
     },
   });
 
-  return data;
+  // If there's no data, return null
+  if (!data) {
+    return null;
+  }
+
+  // Extract courseId from subscribedCourses and return only the course IDs
+  const subscribedCoursesIds =
+    data.subscribedCourses.map((subscribed) => subscribed.courseId) || [];
+
+  return {
+    ...data,
+    subscribedCourses: subscribedCoursesIds,
+  };
 });
 
 //Get all courses
@@ -40,6 +58,62 @@ export const getCourses = cache(async () => {
 
   return data;
 });
+
+// Get subscribedCourses of a user
+export const getUserSubscribedCourses = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const data = await db.query.userSubscribedCourses.findMany({
+    where: eq(userSubscribedCourses.userId, userId),
+    with: {
+      course: true,
+    },
+  });
+
+  //Normalized  result
+  return data.map((subscribedCourse) => ({
+    courseId: subscribedCourse.courseId,
+    courseTitle: subscribedCourse.course?.title,
+    courseImage: subscribedCourse.course?.imageSrc,
+  }));
+});
+
+// Get subscribedCourses by COURSE ID
+export const getUserSubscribedCoursesById = cache(async (courseId: number) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const data = await db.query.userSubscribedCourses.findFirst({
+    where: and(
+      eq(userSubscribedCourses.userId, userId),
+      eq(userSubscribedCourses.courseId, courseId)
+    ),
+  });
+
+  return data;
+});
+
+// Get subscribedCourses by COURSE ID
+export const getUserSubscribedCoursesByUserId = cache(
+  async (userId: string) => {
+    if (!userId) {
+      return null;
+    }
+
+    const data = await db.query.userSubscribedCourses.findFirst({
+      where: eq(userSubscribedCourses.userId, userId),
+    });
+
+    return data;
+  }
+);
 
 //Get course by ID
 export const getCourseById = cache(async (courseId: number) => {
@@ -74,6 +148,7 @@ export const getCourseProgress = cache(async () => {
     return null;
   }
 
+  // Fetch course sections for the active course
   const courseSectionsData = await db.query.courseSections.findMany({
     where: eq(courseSections.courseId, userProgress.activeCourseId),
     with: {
@@ -97,65 +172,39 @@ export const getCourseProgress = cache(async () => {
     },
   });
 
-  //calculate total and completed units for each sections
+  // Calculate total and completed units for each section
   const progressData = await Promise.all(
     courseSectionsData.map(async (section) => {
       const totalUnits = await getTotalUnitsInSection(section.id);
       const completedUnits = await getCompletedUnits(section.id, userId);
-
       return {
         courseSectionId: section.id,
         totalUnits,
         completedUnits,
-        completed: totalUnits === completedUnits, // Mark as completed if all units are completed
+        completed: totalUnits === completedUnits,
       };
     })
   );
 
-  //   const sectionsInActiveCourse = await db.query.courseSections.findMany({
-  //     orderBy: (courseSections, { asc }) => [asc(courseSections.order)],
-  //     where: eq(courseSections.courseId, userProgress.activeCourseId),
-  //     with: {
-  //       units: {
-  //         orderBy: (units, { asc }) => [asc(units.order)],
-  //         with: {
-  //           lessons: {
-  //             orderBy: (lessons, { asc }) => [asc(lessons.order)],
-  //             with: {
-  //               units: true,
-  //               challenges: {
-  //                 with: {
-  //                   challengeProgress: {
-  //                     where: eq(challengeProgress.userId, userId),
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   });
+  // Use the getSectionActiveStatuses() function to find the active section
+  let activeSectionId: number | null = null;
+  for (const section of courseSectionsData) {
+    const isActive = await getSectionActiveStatus(section.id);
+    if (isActive) {
+      activeSectionId = section.id;
+      break;
+    }
+  }
 
-  //   const unitsInSection = await db.query.units.findMany({
-  //     orderBy: (units, { asc }) => [asc(units.order)],
-  //     where: eq(units.courseSectionId, sectionsInActiveCourse),
-  //     with: {
-  //       lessons: {
-  //         orderBy: (lessons, { asc }) => [asc(lessons.order)],
-  //         with: {
-  //           units: true,
-  //           challenges: {
-  //             with: {
-  //               challengeProgress: {
-  //                 where: eq(challengeProgress.userId, userId),
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   });
+  // If no active section is found, use the first uncompleted section
+  if (!activeSectionId) {
+    const firstUncompletedSection = progressData.find(
+      (sectionProgress) => !sectionProgress.completed
+    );
+    activeSectionId = firstUncompletedSection?.courseSectionId || null;
+  }
+
+  // Find the first uncompleted lesson in the course
   const firstUncompletedLesson = courseSectionsData
     .flatMap((section) => section.units)
     .flatMap((unit) => unit.lessons)
@@ -174,6 +223,7 @@ export const getCourseProgress = cache(async () => {
   return {
     activeLesson: firstUncompletedLesson,
     activeLessonId: firstUncompletedLesson?.id,
+    activeSectionId, // Return the active section ID
     courseSectionProgress: progressData,
   };
 });
@@ -600,38 +650,13 @@ export const getSectionPercentage = cache(async (sectionId: number) => {
   const percentage =
     totalUnits === 0 && completedUnits === 0
       ? 0
-      : Math.round(completedUnits / totalUnits) * 100;
+      : Math.round((completedUnits / totalUnits) * 100);
 
   return percentage;
 });
 
-// Get the active of a course section
-export const getSectionActiveStatus = cache(async (sectionId: number) => {
-  const { userId } = await auth();
-  if (!userId) return;
-
-  const sections = await getCourseSections();
-
-  if (!sections) return null;
-
-  const activeSection = await db.query.courseSections.findFirst({
-    where: eq(courseSections.id, sectionId),
-    with: {
-      section: true,
-      sectionProgress: {
-        where: and(
-          eq(sectionProgress.userId, userId),
-          eq(sectionProgress.completed, false)
-        ),
-      },
-    },
-  });
-
-  return activeSection;
-});
-
 //Get the active status of a course section
-export const getSectionActiveStatuses = cache(async (sectionId: number) => {
+export const getSectionActiveStatus = cache(async (sectionId: number) => {
   const { userId } = await auth();
   if (!userId) return false;
 
@@ -698,6 +723,7 @@ export const getSectionActiveStatuses = cache(async (sectionId: number) => {
   // Return true if either previous section is completed or a challenge in this section is completed
   return !!challengeCompleted;
 });
+
 // Get the active of a course section
 export const getSectionCompletedStatus = cache(async (sectionId: number) => {
   const { userId } = await auth();
@@ -774,7 +800,7 @@ export const getCourseSectionInfo = cache(async () => {
     Object.assign(sectionProgressObject, { progress: percentage });
 
     //Get active status a section
-    const active = await getSectionActiveStatuses(id);
+    const active = await getSectionActiveStatus(id);
     Object.assign(sectionProgressObject, { active: active });
 
     //Get completed status a section
@@ -834,7 +860,7 @@ export const getACourseSectionInfo = cache(async (sectionId: number) => {
   const totalUnits = await getTotalUnitsInSection(id);
   const completedUnits = await getCompletedUnits(id, userId);
   const progressPercentage = await getSectionPercentage(id);
-  const active = await getSectionActiveStatuses(id);
+  const active = await getSectionActiveStatus(id);
   const completed = await getSectionCompletedStatus(id);
 
   return {
