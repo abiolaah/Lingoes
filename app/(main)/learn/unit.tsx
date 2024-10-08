@@ -30,7 +30,7 @@ export const Unit = ({
   activeLessonPercentage,
 }: Props) => {
   return (
-    <>
+    <div>
       <UnitBanner title={title} section={section} description={description} />
       <div className="flex items-center flex-col relative">
         {lessons.map((lesson, index) => {
@@ -50,6 +50,6 @@ export const Unit = ({
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
