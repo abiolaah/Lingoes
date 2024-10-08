@@ -9,11 +9,16 @@ import { and, eq } from "drizzle-orm";
 import {
   getCourseById,
   getUserProgress,
+  getUserSubscribedCoursesById,
   getUserSubscription,
 } from "@/db/queries";
-import { challengeProgress, challenges, userProgress } from "@/db/schema";
+import {
+  challengeProgress,
+  challenges,
+  userProgress,
+  userSubscribedCourses,
+} from "@/db/schema";
 import { POINTS_TO_REFILL } from "@/constants";
-import { subscribe } from "diagnostics_channel";
 
 export const upsertUserProgress = async (courseId: number) => {
   const { userId } = await auth();
@@ -37,160 +42,47 @@ export const upsertUserProgress = async (courseId: number) => {
     throw new Error("Course is empty");
   }
 
+  // Ensure that the user progress exists or create it
   const existingUserProgress = await getUserProgress();
 
-  if (existingUserProgress) {
-    await db.update(userProgress).set({
+  if (!existingUserProgress) {
+    // Insert user progress if not already created
+    await db.insert(userProgress).values({
+      userId,
       activeCourseId: courseId,
       userName: user.firstName || "User",
       userImageSrc: user.imageUrl || "/mascot.svg",
     });
-
-    revalidatePath("/courses");
-    revalidatePath("/learn");
-    redirect("/learn");
+  } else {
+    // If user progress exists, update the active course
+    await db
+      .update(userProgress)
+      .set({
+        activeCourseId: courseId,
+        userName: user.firstName || "User",
+        userImageSrc: user.imageUrl || "/mascot.svg",
+      })
+      .where(eq(userProgress.userId, userId));
   }
 
-  await db.insert(userProgress).values({
-    userId,
-    activeCourseId: courseId,
-    userName: user.firstName || "User",
-    userImageSrc: user.imageUrl || "/mascot.svg",
-  });
+  // Check if the user is already subscribed to this course
+  const existingSubscribedCourses = await getUserSubscribedCoursesById(
+    courseId
+  );
 
+  if (!existingSubscribedCourses) {
+    // If the user is not subscribed to the course, subscribe them
+    await db.insert(userSubscribedCourses).values({
+      userId,
+      courseId,
+    });
+  }
+
+  // Revalidate paths and redirect to learn page
   revalidatePath("/courses");
   revalidatePath("/learn");
   redirect("/learn");
 };
-
-// export const updateUserProgress = async (courseId: number) => {
-//   const { userId } = await auth();
-//   const user = await currentUser();
-
-//   if (!userId || !user) {
-//     throw new Error("Unauthorized");
-//   }
-
-//   const course = await getCourseById(courseId);
-
-//   if (!course) {
-//     throw new Error("Course not found");
-//   }
-
-//   if (
-//     !course.sections.length ||
-//     !course.sections[0].units.length ||
-//     !course.sections[0].units[0].lessons.length
-//   ) {
-//     throw new Error("Course is empty");
-//   }
-
-//   const existingUserProgress = await getUserProgress();
-
-//   if (
-//     existingUserProgress &&
-//     !existingUserProgress.subscribedCourses.includes(courseId)
-//   ) {
-//     await db.update(userProgress).set({
-//       activeCourseId: courseId,
-//       subscribedCourses: [...subscribeCourses, courseId],
-//       userName: user.firstName || "User",
-//       userImageSrc: user.imageUrl || "/mascot.svg",
-//     });
-
-//     revalidatePath("/courses");
-//     revalidatePath("/learn");
-//     redirect("/learn");
-//   }
-
-//   if(existingUserProgress && existingUserProgress.subscribedCourses.includes(courseId)) {
-//     await db.update(userProgress).set({
-//       activeCourseId: courseId,
-//       userName: user.firstName || "User",
-//       userImageSrc: user.imageUrl || "/mascot.svg",
-//     });
-
-//     revalidatePath("/courses");
-//     revalidatePath("/learn");
-//     redirect("/learn");
-//   }
-
-//   await db.insert(userProgress).values({
-//     userId,
-//     activeCourseId: courseId,
-//     subscribedCourses: [...subscribeCourses, courseId],
-//     userName: user.firstName || "User",
-//     userImageSrc: user.imageUrl || "/mascot.svg",
-//   });
-
-//   revalidatePath("/courses");
-//   revalidatePath("/learn");
-//   redirect("/learn");
-// };
-
-/* export const subscribeCourse = async (courseId: number) => {
-  const { userId } = await auth();
-  const user = await currentUser();
-
-  if (!userId || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const course = await getCourseById(courseId);
-
-  if (!course) {
-    throw new Error("Course not found");
-  }
-
-  if (
-    !course.sections.length ||
-    !course.sections[0].units.length ||
-    !course.sections[0].units[0].lessons.length
-  ) {
-    throw new Error("Course is empty");
-  }
-  const userProgress = await getUserProgress();
-
-  let subscribedCourses = userProgress.subscribedCourses;
-
-  if (subscribedCourses.includes(courseId)) {
-    throw new Error("Already subscribed to the course");
-  }
-
-  subscribedCourses.push(courseId);
-
-  return subscribedCourses;
-}; */
-/* export const unSubscribeCourse = async (courseId: number) => {
-  const { userId } = await auth();
-  const user = await currentUser();
-
-  if (!userId || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const course = await getCourseById(courseId);
-
-  if (!course) {
-    throw new Error("Course not found");
-  }
-
-  const userProgress = await getUserProgress();
-
-  let subscribedCourses = userProgress.subscribedCourses;
-
-  if (!subscribedCourses.includes(courseId)) {
-    throw new Error("Not subscribed to the course");
-  }
-
-  let index = subscribedCourses.indexOf(courseId);
-
-  if (index !== -1) {
-    subscribedCourses.splice(index, 1);
-  }
-
-  return subscribedCourses;
-}; */
 
 export const reduceHearts = async (challengeId: number) => {
   const { userId } = await auth();
