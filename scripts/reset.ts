@@ -21,6 +21,7 @@ const main = async () => {
     await db.delete(schema.sectionProgress);
     await db.delete(schema.sections);
     await db.delete(schema.units);
+    await db.delete(schema.userSubscribedCourses);
     await db.delete(schema.userProgress);
     await db.delete(schema.userSubscription);
 

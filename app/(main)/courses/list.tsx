@@ -2,19 +2,20 @@
 
 import { useRouter } from "next/navigation";
 
-import { courses, userProgress } from "@/db/schema";
+import { courses, userProgress, userSubscribedCourses } from "@/db/schema";
 
 import { Card } from "./card";
 import { upsertUserProgress } from "@/actions/user-progress";
 
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 type Props = {
   courses: (typeof courses.$inferSelect)[];
   activeCourseId?: typeof userProgress.$inferSelect.activeCourseId;
+  subscribedCourses?: number[];
 };
-export const List = ({ courses, activeCourseId }: Props) => {
+export const List = ({ courses, activeCourseId, subscribedCourses }: Props) => {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -41,6 +42,7 @@ export const List = ({ courses, activeCourseId }: Props) => {
           onClick={onClick}
           disabled={false}
           active={course.id === activeCourseId}
+          subscribed={subscribedCourses?.includes(course.id) ?? false} // Check if the course is subscribed
         />
       ))}
     </div>

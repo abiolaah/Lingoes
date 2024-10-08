@@ -9,6 +9,7 @@ import { Toaster } from "sonner";
 import { ExitModal } from "@/components/modals/exit-modal";
 import { HeartsModal } from "@/components/modals/hearts-modal";
 import { PracticeModal } from "@/components/modals/practice-modal";
+import { SectionProvider } from "@/context/SectionContext";
 
 const font = Nunito({ subsets: ["latin"] });
 
@@ -36,7 +37,7 @@ export default function RootLayout({
             <ExitModal />
             <HeartsModal />
             <PracticeModal />
-            {children}
+            <SectionProvider>{children}</SectionProvider>
           </ThemeProvider>
         </body>
       </html>
