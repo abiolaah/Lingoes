@@ -3,7 +3,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  variant: "points" | "hearts" | "percentage" | "time";
+  variant: "points" | "hearts" | "percentage" | "time" | "attendance";
   value: number | string;
 };
 
@@ -15,7 +15,9 @@ export const ResultCard = ({ variant, value }: Props) => {
       ? "/icons/points.svg"
       : variant === "percentage"
       ? "/icons/percent.svg"
-      : "/icons/timer.svg";
+      : variant === "time"
+      ? "/icons/timer.svg"
+      : "/icons/streak.svg";
 
   const percentageHeaderText = (() => {
     const percentage =
@@ -35,6 +37,24 @@ export const ResultCard = ({ variant, value }: Props) => {
     return text;
   })();
 
+  const timerHeaderText = (() => {
+    const time =
+      typeof value === "number" || !isNaN(Number(value)) ? Number(value) : null;
+    const text =
+      time !== null
+        ? time >= 90
+          ? "Amazing"
+          : time >= 70
+          ? "Great work"
+          : time >= 50
+          ? "Good Job"
+          : time < 50
+          ? "Practice More"
+          : "Percentage Score"
+        : "Percentage";
+    return text;
+  })();
+
   const getHeaderText = () => {
     const boxTitle =
       variant === "hearts"
@@ -43,14 +63,13 @@ export const ResultCard = ({ variant, value }: Props) => {
         ? "Total XP"
         : variant === "percentage"
         ? percentageHeaderText
-        : "Quick";
+        : variant === "time"
+        ? "Quick"
+        : "Streak";
 
     return boxTitle;
   };
 
-  // const grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : score >= 60 ? "D" : "F";
-
-  // const percentageLabel
   return (
     <div
       className={cn(
@@ -58,7 +77,8 @@ export const ResultCard = ({ variant, value }: Props) => {
         variant === "points" && "bg-orange-300 border-orange-300",
         variant === "hearts" && "bg-rose-500 border-orange-500",
         variant === "time" && "bg-blue-400 border-blue-400",
-        variant === "percentage" && "bg-green-300 border-green-300"
+        variant === "percentage" && "bg-green-300 border-green-300",
+        variant === "attendance" && "bg-amber-600 border-amber-600"
       )}
     >
       <div
@@ -67,7 +87,8 @@ export const ResultCard = ({ variant, value }: Props) => {
           variant === "points" && "bg-orange-300",
           variant === "hearts" && "bg-rose-500",
           variant === "time" && "bg-blue-400",
-          variant === "percentage" && "bg-green-300"
+          variant === "percentage" && "bg-green-300",
+          variant === "attendance" && "bg-amber-600"
         )}
       >
         {getHeaderText()}
@@ -78,7 +99,8 @@ export const ResultCard = ({ variant, value }: Props) => {
           variant === "points" && "text-orange-300",
           variant === "hearts" && "text-rose-500",
           variant === "time" && "text-blue-400",
-          variant === "percentage" && "text-green-300"
+          variant === "percentage" && "text-green-300",
+          variant === "attendance" && "text-amber-600"
         )}
       >
         <Image
@@ -89,7 +111,9 @@ export const ResultCard = ({ variant, value }: Props) => {
               ? "Hearts"
               : variant === "percentage"
               ? "Percentage"
-              : "Time"
+              : variant === "time"
+              ? "Time"
+              : "Streak"
           }
           src={imageSrc}
           width={30}

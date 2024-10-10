@@ -21,6 +21,8 @@ import { Challenge } from "./challenge";
 import { Footer } from "./footer";
 import { ResultCard } from "./result-card";
 
+import { updateAttendance } from "../../lib/helper";
+
 type Props = {
   initialLessonId: number;
   initialLessonChallenge: (typeof challenges.$inferSelect & {
@@ -47,9 +49,7 @@ export const Quiz = ({
   const { open: openPracticeModal } = usePracticeModal();
 
   const MAX_PERCENTAGE = 100;
-  const CHALLENGE_WEIGHT = Math.ceil(
-    MAX_PERCENTAGE / initialLessonChallenge.length
-  );
+  const CHALLENGE_WEIGHT = MAX_PERCENTAGE / initialLessonChallenge.length;
 
   useMount(() => {
     if (initialPercentage === 100) {
@@ -96,7 +96,23 @@ export const Quiz = ({
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
 
-  const challenge = challenges[activeIndex];
+  // New state to track incorrect challenges
+  const [incorrectChallenges, setIncorrectChallenges] = useState<number[]>([]);
+  const [isReviewingIncorrect, setIsReviewingIncorrect] = useState(false);
+  const [hasMarkedAttendance, setHasMarkedAttendance] = useState(false);
+  // const [streak, setStreak] = useState<number>(0);
+
+  // Prevent the quiz from being stuck on last question
+  const isQuizCompleted =
+    activeIndex >= challenges.length && incorrectChallenges.length === 0;
+
+  // Select challenge based on review mode or regular mode
+  const challenge = isQuizCompleted
+    ? null
+    : isReviewingIncorrect && incorrectChallenges.length > 0
+    ? challenges[incorrectChallenges[activeIndex]]
+    : challenges[activeIndex];
+
   const options = challenge?.challengeOptions ?? [];
 
   useEffect(() => {
@@ -105,7 +121,30 @@ export const Quiz = ({
   }, []);
 
   const onNext = () => {
-    setActiveIndex((current) => current + 1);
+    if (isReviewingIncorrect) {
+      // If currently reviewing incorrect challenges
+      if (activeIndex < incorrectChallenges.length) {
+        // Continue reviewing incorrect challenges
+        setActiveIndex((current) => current + 1);
+      } else {
+        // Finished reviewing incorrect challenges
+        setIsReviewingIncorrect(false); // Exit review mode
+        setActiveIndex(challenges.length); // Optionally set this to end or leave it
+      }
+    } else {
+      // Not in review mode
+      if (activeIndex < challenges.length - 1) {
+        // Move to next challenge in normal mode
+        setActiveIndex((current) => current + 1);
+      } else if (incorrectChallenges.length > 0) {
+        // If there are incorrect challenges, start reviewing
+        setActiveIndex(0);
+        setIsReviewingIncorrect(true);
+      } else {
+        // If no more challenges, mark quiz as completed
+        setActiveIndex(challenges.length); // Move to the end
+      }
+    }
   };
 
   const onSelect = (id: number) => {
@@ -115,9 +154,14 @@ export const Quiz = ({
   };
 
   const onContinue = () => {
+    if (!challenge) return; // No challenge to continue
+
     if (!selectedOption) return;
 
+    const correctOption = options.find((option) => option.correct);
+
     if (status === "wrong") {
+      onNext();
       setStatus("none");
       setSelectedOption(undefined);
       return;
@@ -129,8 +173,6 @@ export const Quiz = ({
       setSelectedOption(undefined);
       return;
     }
-
-    const correctOption = options.find((option) => option.correct);
 
     if (!correctOption) return;
 
@@ -145,11 +187,22 @@ export const Quiz = ({
 
             correctControls.play();
             setStatus("correct");
-            setPercentage((prev) => prev + 100 / challenges.length);
-            setLessonPercentage((prev) => prev + CHALLENGE_WEIGHT);
 
-            if (initialPercentage === 100) {
+            if (!isReviewingIncorrect) {
+              // Only update percentage if not in review mode
+              setPercentage((prev) => prev + 100 / challenges.length);
+              setLessonPercentage((prev) => prev + CHALLENGE_WEIGHT);
+            }
+
+            if (!isReviewingIncorrect && initialPercentage === 100) {
               setHearts((prev) => Math.min(prev + 1, 5));
+            }
+
+            if (isReviewingIncorrect) {
+              // Remove the challenge from the incorrect challenges list
+              setIncorrectChallenges((prev) =>
+                prev.filter((_, index) => index !== activeIndex)
+              );
             }
           })
           .catch(() => toast.error("Something went wrong. Please try again"));
@@ -174,6 +227,10 @@ export const Quiz = ({
             if (!response?.error) {
               setHearts((prev) => Math.max(prev - 1, 0));
             }
+
+            if (!isReviewingIncorrect) {
+              setIncorrectChallenges((prev) => [...prev, activeIndex]);
+            }
           })
           .catch(() => toast.error("Something went wrong! Please try again"));
       });
@@ -181,10 +238,10 @@ export const Quiz = ({
   };
 
   useEffect(() => {
-    if (activeIndex === challenges.length) {
+    if (isQuizCompleted) {
       setEndTime(new Date());
     }
-  }, [activeIndex, challenges.length, startTime]);
+  }, [isQuizCompleted]);
 
   const formatTimeTaken = (start: Date | null, end: Date | null): string => {
     if (!start || !end) return "0:00";
@@ -196,8 +253,9 @@ export const Quiz = ({
   };
 
   const timeTaken = formatTimeTaken(startTime, endTime);
+  const streak = updateAttendance();
 
-  if (!challenge) {
+  if (isQuizCompleted) {
     return (
       <div>
         {finishAudio}
@@ -231,6 +289,9 @@ export const Quiz = ({
             <ResultCard variant="hearts" value={hearts} />
             <ResultCard variant="percentage" value={lessonPercentage} />
             <ResultCard variant="time" value={timeTaken} />
+            {hasMarkedAttendance && (
+              <ResultCard variant="attendance" value={streak} />
+            )}
           </div>
         </div>
         <Footer
@@ -241,7 +302,9 @@ export const Quiz = ({
       </div>
     );
   }
-
+  if (!challenge) {
+    return <div>No Challenge Found</div>;
+  }
   const title =
     challenge.type === "ASSIST"
       ? "Select the correct meaning"
