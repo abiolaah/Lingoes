@@ -15,6 +15,7 @@ import {
   userSubscription,
   sectionProgress,
   userSubscribedCourses,
+  attendance,
 } from "@/db/schema";
 
 //Get user progress
@@ -89,6 +90,39 @@ export const getUserProgressWithSubscribedCourse = cache(async () => {
     ...data,
     subscribedCourses: subscribedCoursesDetails,
   };
+});
+
+// Get streak count
+export const getUserStreak = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) return;
+
+  const data = await db.query.userProgress.findFirst({
+    where: eq(userProgress.userId, userId),
+    columns: {
+      streakCount: true,
+      lastAttendanceDate: true,
+      streakFrozen: true,
+    },
+  });
+
+  return data;
+});
+
+export const getUserAttendance = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const data = await db.query.attendance.findMany({
+    where: eq(attendance.userId, userId),
+    orderBy: (attendance, { desc }) => [desc(attendance.attendanceDate)],
+  });
+
+  return data;
 });
 
 //Get all courses

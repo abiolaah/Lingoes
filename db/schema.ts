@@ -193,6 +193,15 @@ export const userProgress = pgTable("user_progress", {
   }),
   hearts: integer("hearts").notNull().default(5),
   points: integer("points").notNull().default(0),
+  streakCount: integer("streak_count").default(0),
+  streakFrozen: boolean("streak_frozen").default(false),
+  lastAttendanceDate: timestamp("last_attendance_date"),
+});
+
+export const attendance = pgTable("attendance", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id"),
+  attendanceDate: timestamp("attendance_date"),
 });
 
 export const userProgressRelations = relations(
@@ -203,8 +212,16 @@ export const userProgressRelations = relations(
       references: [courses.id],
     }),
     subscribedCourses: many(userSubscribedCourses),
+    attendance: many(attendance),
   })
 );
+
+export const attendanceRelations = relations(attendance, ({ one }) => ({
+  user: one(userProgress, {
+    fields: [attendance.userId],
+    references: [userProgress.userId],
+  }),
+}));
 
 export const userSubscribedCourses = pgTable("user_subscribed_courses", {
   id: serial("id").primaryKey(),
