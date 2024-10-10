@@ -73,8 +73,6 @@ const LearnPage = async () => {
 
   const units = sectionUnits;
 
-  console.log("SECTIONS UNITS", units);
-
   if (!units) {
     toast.info("Section does not have any units and lessons yet");
     redirect("/sections");
@@ -85,7 +83,6 @@ const LearnPage = async () => {
       ...lesson,
     }));
   });
-  console.log("SECTIONS UNITS' LESSONS", sectionLessons);
 
   const isPro = !!userSubscription?.isActive;
 
@@ -108,7 +105,6 @@ const LearnPage = async () => {
               description={unit.description}
               title={unit.title}
               section={unit.sectionTitle}
-              // section={sectionTitle}
               lessons={unit.lessons}
               activeLesson={
                 courseProgress.activeLesson as
