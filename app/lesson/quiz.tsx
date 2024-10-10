@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 import { challengeOptions, challenges, userSubscription } from "@/db/schema";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
-import { reduceHearts } from "@/actions/user-progress";
+import { reduceHearts, updateAttendanceStreak } from "@/actions/user-progress";
 import { useHeartsModal } from "@/store/use-hearts-modal";
 import { usePracticeModal } from "@/store/use-practice-modal";
 
@@ -20,8 +20,6 @@ import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
 import { Footer } from "./footer";
 import { ResultCard } from "./result-card";
-
-import { updateAttendance } from "../../lib/helper";
 
 type Props = {
   initialLessonId: number;
@@ -100,7 +98,6 @@ export const Quiz = ({
   const [incorrectChallenges, setIncorrectChallenges] = useState<number[]>([]);
   const [isReviewingIncorrect, setIsReviewingIncorrect] = useState(false);
   const [hasMarkedAttendance, setHasMarkedAttendance] = useState(false);
-  // const [streak, setStreak] = useState<number>(0);
 
   // Prevent the quiz from being stuck on last question
   const isQuizCompleted =
@@ -243,6 +240,18 @@ export const Quiz = ({
     }
   }, [isQuizCompleted]);
 
+  useEffect(() => {
+    if (isQuizCompleted && !hasMarkedAttendance) {
+      //update attendance and streak only if attendance hasn't been marked yet
+      updateAttendanceStreak()
+        .then(() => {
+          setHasMarkedAttendance(true);
+          toast.info("Attendance has been marked");
+        })
+        .catch(() => toast.info("Failed to update attendance. Try again."));
+    }
+  }, [isQuizCompleted, hasMarkedAttendance]);
+
   const formatTimeTaken = (start: Date | null, end: Date | null): string => {
     if (!start || !end) return "0:00";
 
@@ -253,7 +262,6 @@ export const Quiz = ({
   };
 
   const timeTaken = formatTimeTaken(startTime, endTime);
-  const streak = updateAttendance();
 
   if (isQuizCompleted) {
     return (
@@ -289,9 +297,6 @@ export const Quiz = ({
             <ResultCard variant="hearts" value={hearts} />
             <ResultCard variant="percentage" value={lessonPercentage} />
             <ResultCard variant="time" value={timeTaken} />
-            {hasMarkedAttendance && (
-              <ResultCard variant="attendance" value={streak} />
-            )}
           </div>
         </div>
         <Footer
