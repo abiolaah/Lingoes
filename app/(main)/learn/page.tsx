@@ -4,7 +4,6 @@ import { cookies } from "next/headers"; // Use cookies to read activeSectionId
 import { redirect, useRouter } from "next/navigation";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { StickyWrapper } from "@/components/sticky-wrapper";
-import { UserProgress } from "@/components/user-progress";
 import { Promo } from "@/components/promo";
 import { Quests } from "@/components/quests";
 import { Header } from "./header";
@@ -22,8 +21,6 @@ import { lessons, units as unitsSchema } from "@/db/schema";
 import { Leaderboard } from "@/components/leaderboard";
 import Link from "next/link";
 import { toast } from "sonner";
-import { unSubscribeCourse, upsertUserProgress } from "@/actions/user-progress";
-import { useTransition } from "react";
 import { StickyContent } from "@/components/sticky-content";
 
 const LearnPage = async () => {
