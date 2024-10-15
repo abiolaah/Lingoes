@@ -9,9 +9,18 @@ import Confetti from "react-confetti";
 
 import { toast } from "sonner";
 
-import { challengeOptions, challenges, userSubscription } from "@/db/schema";
+import {
+  challengeOptions,
+  challenges,
+  userProgress,
+  userSubscription,
+} from "@/db/schema";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
-import { reduceHearts, updateAttendanceStreak } from "@/actions/user-progress";
+import {
+  reduceHearts,
+  updateAttendanceStreak,
+  updatePoints,
+} from "@/actions/user-progress";
 import { useHeartsModal } from "@/store/use-hearts-modal";
 import { usePracticeModal } from "@/store/use-practice-modal";
 
@@ -96,8 +105,10 @@ export const Quiz = ({
 
   // New state to track incorrect challenges
   const [incorrectChallenges, setIncorrectChallenges] = useState<number[]>([]);
+  const [correctChallenges, setCorrectChallenges] = useState<number[]>([]);
   const [isReviewingIncorrect, setIsReviewingIncorrect] = useState(false);
   const [hasMarkedAttendance, setHasMarkedAttendance] = useState(false);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
 
   // Prevent the quiz from being stuck on last question
   const isQuizCompleted =
@@ -188,7 +199,8 @@ export const Quiz = ({
             if (!isReviewingIncorrect) {
               // Only update percentage if not in review mode
               setPercentage((prev) => prev + 100 / challenges.length);
-              setLessonPercentage((prev) => prev + CHALLENGE_WEIGHT);
+              setLessonPercentage((prev) => Math.ceil(prev + CHALLENGE_WEIGHT));
+              setCorrectChallenges((prev) => [...prev, activeIndex]);
             }
 
             if (!isReviewingIncorrect && initialPercentage === 100) {
@@ -218,7 +230,7 @@ export const Quiz = ({
             setLessonPercentage((prev) => {
               const weight = CHALLENGE_WEIGHT;
               if (prev === 0 || (prev > 0 && prev < weight)) return 0;
-              return prev - weight;
+              return Math.ceil(prev - weight);
             });
 
             if (!response?.error) {
@@ -237,18 +249,28 @@ export const Quiz = ({
   useEffect(() => {
     if (isQuizCompleted) {
       setEndTime(new Date());
+
+      // Ensure points are calculated only from correct challenges
+      const pointsFromCorrectChallenges = correctChallenges.length * 10;
+
+      setTotalPoints(pointsFromCorrectChallenges);
+
+      updatePoints(pointsFromCorrectChallenges);
     }
-  }, [isQuizCompleted]);
+  }, [isQuizCompleted, correctChallenges.length]);
 
   useEffect(() => {
     if (isQuizCompleted && !hasMarkedAttendance) {
-      //update attendance and streak only if attendance hasn't been marked yet
       updateAttendanceStreak()
         .then(() => {
-          setHasMarkedAttendance(true);
+          setHasMarkedAttendance(true); // Mark attendance successfully
           toast.info("Attendance has been marked");
         })
-        .catch(() => toast.info("Failed to update attendance. Try again."));
+        .catch((error) => {
+          if (error.message !== "Attendance already marked for today") {
+            toast.error("Failed to update attendance. Try again.");
+          }
+        });
     }
   }, [isQuizCompleted, hasMarkedAttendance]);
 
@@ -293,7 +315,7 @@ export const Quiz = ({
             Great job! <br /> You&apos;ve completed the lesson.
           </h1>
           <div className="flex items-center gap-x-4 w-full justify-evenly">
-            <ResultCard variant="points" value={challenges.length * 10} />
+            <ResultCard variant="points" value={totalPoints} />
             <ResultCard variant="hearts" value={hearts} />
             <ResultCard variant="percentage" value={lessonPercentage} />
             <ResultCard variant="time" value={timeTaken} />
