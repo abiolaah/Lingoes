@@ -110,6 +110,44 @@ export const getUserStreak = cache(async () => {
   return data;
 });
 
+//Get attendance date and last attendance date
+export const getUserAttendanceDate = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const result = await db.query.userProgress.findFirst({
+    where: eq(userProgress.userId, userId),
+    with: {
+      attendance: true, // Ensure attendance records are included
+    },
+    columns: {
+      lastAttendanceDate: true, // Get last attendance date
+    },
+  });
+
+  // Check if result exists
+  if (!result) {
+    return {
+      lastAttendanceDate: null,
+      attendanceDate: null,
+    };
+  }
+
+  // Get the latest attendance record (if it exists)
+  const latestAttendance =
+    result.attendance.length > 0
+      ? result.attendance[result.attendance.length - 1]
+      : null;
+
+  return {
+    lastAttendanceDate: result.lastAttendanceDate,
+    attendanceDate: latestAttendance?.attendanceDate || null,
+  };
+});
+
 export const getUserAttendance = cache(async () => {
   const { userId } = await auth();
 
