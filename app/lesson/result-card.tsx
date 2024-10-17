@@ -15,9 +15,7 @@ export const ResultCard = ({ variant, value }: Props) => {
       ? "/icons/points.svg"
       : variant === "percentage"
       ? "/icons/percent.svg"
-      : variant === "time"
-      ? "/icons/timer.svg"
-      : "/icons/streak.svg";
+      : "/icons/timer.svg";
 
   const percentageHeaderText = (() => {
     const percentage =
@@ -38,20 +36,19 @@ export const ResultCard = ({ variant, value }: Props) => {
   })();
 
   const timerHeaderText = (() => {
-    const time =
-      typeof value === "number" || !isNaN(Number(value)) ? Number(value) : null;
+    const time = typeof value === "string" ? value : null;
     const text =
       time !== null
-        ? time >= 90
-          ? "Amazing"
-          : time >= 70
-          ? "Great work"
-          : time >= 50
-          ? "Good Job"
-          : time < 50
-          ? "Practice More"
-          : "Percentage Score"
-        : "Percentage";
+        ? time <= "4:30"
+          ? "Committed"
+          : time >= "4:29"
+          ? "Quick"
+          : time >= "3:00"
+          ? "Speedy"
+          : time <= "1:30"
+          ? "Blazing"
+          : "Time taken"
+        : "Time";
     return text;
   })();
 
@@ -64,8 +61,8 @@ export const ResultCard = ({ variant, value }: Props) => {
         : variant === "percentage"
         ? percentageHeaderText
         : variant === "time"
-        ? "Quick"
-        : "Streak";
+        ? timerHeaderText // Use timerHeaderText for the time variant
+        : "Quick";
 
     return boxTitle;
   };
@@ -77,8 +74,7 @@ export const ResultCard = ({ variant, value }: Props) => {
         variant === "points" && "bg-orange-300 border-orange-300",
         variant === "hearts" && "bg-rose-500 border-orange-500",
         variant === "time" && "bg-blue-400 border-blue-400",
-        variant === "percentage" && "bg-green-300 border-green-300",
-        variant === "attendance" && "bg-amber-600 border-amber-600"
+        variant === "percentage" && "bg-green-300 border-green-300"
       )}
     >
       <div
@@ -87,8 +83,7 @@ export const ResultCard = ({ variant, value }: Props) => {
           variant === "points" && "bg-orange-300",
           variant === "hearts" && "bg-rose-500",
           variant === "time" && "bg-blue-400",
-          variant === "percentage" && "bg-green-300",
-          variant === "attendance" && "bg-amber-600"
+          variant === "percentage" && "bg-green-300"
         )}
       >
         {getHeaderText()}
@@ -99,8 +94,7 @@ export const ResultCard = ({ variant, value }: Props) => {
           variant === "points" && "text-orange-300",
           variant === "hearts" && "text-rose-500",
           variant === "time" && "text-blue-400",
-          variant === "percentage" && "text-green-300",
-          variant === "attendance" && "text-amber-600"
+          variant === "percentage" && "text-green-300"
         )}
       >
         <Image
@@ -111,16 +105,18 @@ export const ResultCard = ({ variant, value }: Props) => {
               ? "Hearts"
               : variant === "percentage"
               ? "Percentage"
-              : variant === "time"
-              ? "Time"
-              : "Streak"
+              : "Time"
           }
           src={imageSrc}
           width={30}
           height={30}
           className="mr-1.5"
         />
-        {variant === "time" ? value : Number(value)}
+        {variant === "time"
+          ? value
+          : variant === "percentage"
+          ? `${Number(value)}%`
+          : Number(value)}
       </div>
     </div>
   );
