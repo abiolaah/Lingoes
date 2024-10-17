@@ -3,7 +3,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  variant: "points" | "hearts" | "percentage" | "time";
+  variant: "points" | "hearts" | "percentage" | "time" | "attendance";
   value: number | string;
 };
 
@@ -35,6 +35,23 @@ export const ResultCard = ({ variant, value }: Props) => {
     return text;
   })();
 
+  const timerHeaderText = (() => {
+    const time = typeof value === "string" ? value : null;
+    const text =
+      time !== null
+        ? time <= "4:30"
+          ? "Committed"
+          : time >= "4:29"
+          ? "Quick"
+          : time >= "3:00"
+          ? "Speedy"
+          : time <= "1:30"
+          ? "Blazing"
+          : "Time taken"
+        : "Time";
+    return text;
+  })();
+
   const getHeaderText = () => {
     const boxTitle =
       variant === "hearts"
@@ -43,14 +60,13 @@ export const ResultCard = ({ variant, value }: Props) => {
         ? "Total XP"
         : variant === "percentage"
         ? percentageHeaderText
+        : variant === "time"
+        ? timerHeaderText // Use timerHeaderText for the time variant
         : "Quick";
 
     return boxTitle;
   };
 
-  // const grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : score >= 60 ? "D" : "F";
-
-  // const percentageLabel
   return (
     <div
       className={cn(
@@ -96,7 +112,11 @@ export const ResultCard = ({ variant, value }: Props) => {
           height={30}
           className="mr-1.5"
         />
-        {variant === "time" ? value : Number(value)}
+        {variant === "time"
+          ? value
+          : variant === "percentage"
+          ? `${Number(value)}%`
+          : Number(value)}
       </div>
     </div>
   );

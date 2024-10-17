@@ -13,6 +13,7 @@ import {
   getUserSubscription,
 } from "@/db/queries";
 import {
+  attendance,
   challengeProgress,
   challenges,
   userProgress,
@@ -27,8 +28,6 @@ export const upsertUserProgress = async (courseId: number) => {
   if (!userId || !user) {
     throw new Error("Unauthorized");
   }
-
-  console.log("USER PROGRESS COURSE INFO", courseId);
   const course = await getCourseById(courseId);
 
   if (!course) {
@@ -83,6 +82,34 @@ export const upsertUserProgress = async (courseId: number) => {
   revalidatePath("/courses");
   revalidatePath("/learn");
   redirect("/learn");
+};
+
+export const updatePoints = async (points: number) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const currentUserProgress = await getUserProgress();
+
+  if (!currentUserProgress) {
+    throw new Error("User progress not found");
+  }
+
+  const totalPoints = currentUserProgress.points + points;
+
+  await db
+    .update(userProgress)
+    .set({
+      points: totalPoints,
+    })
+    .where(eq(userProgress.userId, userId));
+
+  revalidatePath("/shop");
+  revalidatePath("/learn");
+  revalidatePath("/quests");
+  revalidatePath("/leaderboard");
 };
 
 export const reduceHearts = async (challengeId: number) => {
@@ -248,4 +275,70 @@ export const unSubscribeCourse = async (courseId: number) => {
 
   // Optionally redirect or return a success message
   redirect("/courses");
+};
+
+export const updateAttendanceStreak = async () => {
+  const { userId } = await auth();
+  const user = await currentUser();
+
+  const today = new Date();
+  const formattedToday = new Date().toDateString();
+
+  if (!userId || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const existingAttendance = await db.query.attendance.findFirst({
+    where: and(
+      eq(attendance.userId, userId),
+      eq(attendance.attendanceDate, today)
+    ),
+  });
+
+  const currentUserProgress = await getUserProgress();
+
+  if (!currentUserProgress) {
+    throw new Error("User progress not found");
+  }
+  const { streakCount, lastAttendanceDate, streakFrozen } = currentUserProgress;
+
+  const streak = streakCount ? streakCount : 0;
+  const lastDate = lastAttendanceDate?.toDateString();
+
+  // Determine if attendance happened today or if streak needs updating
+  const attendanceToday = lastDate === formattedToday;
+  const updatedStreakCount = streak + 1;
+
+  if (attendanceToday) {
+    console.log("Attendance already marked for today");
+    return;
+  }
+
+  // If no attendance for today exists, insert new record and update streak
+  if (!existingAttendance) {
+    // Insert new attendance record
+    await db.insert(attendance).values({
+      userId,
+      attendanceDate: today,
+    });
+    // Update streak count and attendance date
+    await db
+      .update(userProgress)
+      .set({
+        streakCount: updatedStreakCount,
+        lastAttendanceDate: today,
+        streakFrozen: false,
+      })
+      .where(eq(userProgress.userId, userId));
+  } else if (!attendanceToday && !streakFrozen) {
+    await db
+      .update(userProgress)
+      .set({ streakFrozen: true })
+      .where(eq(userProgress.userId, userId));
+  }
+
+  revalidatePath("/shop");
+  revalidatePath("/learn");
+  revalidatePath("/quests");
+  revalidatePath("/leaderboard");
 };

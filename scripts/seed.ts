@@ -821,19 +821,19 @@ const challengeOptionsPopulation = async () => {
   // options for challenge.id=9, lesson.id =1
   await db.insert(schema.challengeOptions).values([
     {
-      challengeId: 6, // "the dog"?
+      challengeId: 9, // "the dog"?
       correct: true,
       text: "le chien",
       audioSrc: "/audio/fr_dog.mp3",
     },
     {
-      challengeId: 6,
+      challengeId: 9,
       correct: false,
       text: "le chat",
       audioSrc: "/audio/fr_cat.mp3",
     },
     {
-      challengeId: 6,
+      challengeId: 9,
       correct: false,
       text: "le robot",
       audioSrc: "/audio/fr_robot.mp3",

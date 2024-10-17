@@ -17,6 +17,8 @@ type Props = {
   activeCourse: typeof courses.$inferSelect;
   hearts: number;
   points: number;
+  streak: number | 0;
+  hasCompletedLessonToday: boolean;
   subscribedCourses: any[];
   hasActiveSubscription: boolean;
 };
@@ -25,6 +27,8 @@ export const UserProgress = ({
   activeCourse,
   hearts,
   points,
+  streak,
+  hasCompletedLessonToday,
   subscribedCourses,
   hasActiveSubscription,
 }: Props) => {
@@ -38,8 +42,6 @@ export const UserProgress = ({
     if (courseId === activeCourse.id) {
       return router.push("/learn");
     }
-
-    console.log("COURSE ID from onClick", courseId);
 
     startTransition(() => {
       upsertUserProgress(courseId)
@@ -96,6 +98,23 @@ export const UserProgress = ({
           {points}
         </Button>
       </Link>
+      <Link href="/shop">
+        <Button variant="ghost" className="text-amber-600">
+          <Image
+            src={
+              hasCompletedLessonToday
+                ? "/icons/active-streak.svg"
+                : "/icons/inactive-streak.svg"
+            }
+            alt="Streak"
+            height={28}
+            width={28}
+            className="mr-2"
+          />
+          {streak ?? 0}
+        </Button>
+      </Link>
+
       <Link href="/shop">
         <Button variant="ghost" className="text-rose-500">
           <Image
