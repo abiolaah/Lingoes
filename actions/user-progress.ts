@@ -310,7 +310,8 @@ export const updateAttendanceStreak = async () => {
   const updatedStreakCount = streak + 1;
 
   if (attendanceToday) {
-    throw new Error("Attendance already marked for today");
+    console.log("Attendance already marked for today");
+    return;
   }
 
   // If no attendance for today exists, insert new record and update streak
@@ -340,5 +341,4 @@ export const updateAttendanceStreak = async () => {
   revalidatePath("/learn");
   revalidatePath("/quests");
   revalidatePath("/leaderboard");
-  redirect("/learn");
 };
